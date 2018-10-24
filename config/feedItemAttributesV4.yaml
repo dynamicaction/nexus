@@ -1,0 +1,45 @@
+---
+feedJobName: feedItemAttributesV4
+feedOutput: feedItemAttributes
+flows:
+  - flowId: fragItemAttributes-Merge
+    flowInputs:
+      - fragItemAttributes
+    schema:
+      - { columnName: item_id, columnType: string }
+      - { columnName: idx, columnType: integer }
+      - { columnName: value, columnType: string }
+
+  - flowId: fragItemAttributesSegmentValue-Merge
+    flowInputs:
+      - fragItemAttributesSegmentValue
+    schema:
+      - { columnName: item_id, columnType: string }
+      - { columnName: idx, columnType: integer }
+      - { columnName: segmentId, columnType: string }
+
+  - flowId: fragItemAttributesSegment-Merge
+    flowInputs:
+      - fragItemAttributesSegment
+    schema:
+      - { columnName: idx, columnType: integer }
+      - { columnName: segmentId, columnType: string }
+      - { columnName: value, columnType: string}
+
+  - flowId: fragItemAttributesSegmentToValues-Join
+    flowInputs:
+      - fragItemAttributesSegmentValue-Merge
+      - fragItemAttributesSegment-Merge
+    schema:
+      - { columnName: item_id, columnType: string }
+      - { columnName: idx, columnType: integer }
+      - { columnName: value, columnType: string }
+
+  - flowId: fragItemAttributes-Join
+    flowInputs:
+      - fragItemAttributesSegmentToValues-Join
+      - fragItemAttributes-Merge
+    schema:
+      - { columnName: item_id, columnType: string }
+      - { columnName: idx, columnType: integer }
+      - { columnName: value, columnType: string }

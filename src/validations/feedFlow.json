@@ -1,0 +1,38 @@
+{
+  "properties": {
+    "feedOutput": {
+      "type": "string",
+      "minLength": 4
+    },
+    "feedJobName": {
+      "type": "string",
+      "minLength": 4
+    },
+    "flows": {
+      "type": "array",
+      "minItems": 2,
+      "items": {
+        "type": "object",
+        "properties": {
+          "flowId": {
+            "type": "string",
+            "minLength": 4
+          },
+          "flowInputs": {
+            "type": "array",
+            "minItmes": 1,
+            "items": {
+              "type": "string",
+              "minLength": 4
+            }
+          }
+        }
+      }
+    }
+  },
+  "required": [
+    "feedOutput",
+    "feedJobName",
+    "flows"
+  ]
+}

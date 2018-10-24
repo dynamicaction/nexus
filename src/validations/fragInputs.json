@@ -1,0 +1,44 @@
+{
+  "properties": {
+    "fragInputs": {
+      "type": "array",
+      "minItems": 1,
+      "items": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string",
+            "minLength": 4
+          },
+          "isCore": {
+            "type": "boolean"
+          },
+          "description": {
+            "type": "string",
+            "minLength": 4
+          },
+          "schema": {
+            "type": "array",
+            "minItems": 2,
+            "items": {
+              "type": "object",
+              "properties": {
+                "columnName": {
+                  "type": "string",
+                  "minLength": 3
+                },
+                "columnType": {
+                  "type": "string",
+                  "minLength": 4,
+                  "enum": ["string", "double", "integer", "float", "boolean", "date"]
+                }
+              },
+              "required": ["columnName", "columnType"]
+            }
+          }
+        },
+        "required": ["id", "description", "schema"]
+      }
+    }
+  }
+}

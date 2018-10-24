@@ -1,0 +1,115 @@
+<!DOCTYPE html>
+<meta charset="utf-8">
+<title>SANKEY Experiment</title>
+<style>
+
+.node rect {
+  cursor: move;
+  fill-opacity: .9;
+  shape-rendering: crispEdges;
+}
+
+.node text {
+  pointer-events: none;
+  text-shadow: 0 1px 0 #fff;
+  font-size: 8px;
+  font-weight: bold;
+}
+
+.link {
+  fill: none;
+  stroke: #000;
+  stroke-opacity: .2;
+}
+
+.link:hover {
+  stroke-opacity: .5;
+}
+
+.loader {
+  border: 16px solid #f3f3f3;
+  border-radius: 50%;
+  border-top: 16px solid blue;
+  border-right: 16px solid green;
+  border-bottom: 16px solid red;
+  border-left: 16px solid pink;
+  width: 120px;
+  height: 120px;
+  -webkit-animation: spin 2s linear infinite;
+  animation: spin 2s linear infinite;
+}
+
+@-webkit-keyframes spin {
+  0% { -webkit-transform: rotate(0deg); }
+  100% { -webkit-transform: rotate(360deg); }
+}
+
+@keyframes spin {
+  0% { transform: rotate(0deg); }
+  100% { transform: rotate(360deg); }
+}
+
+</style>
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>DynamicAction Nexus</title>
+    <!--stylesheets / link tags loaded here-->
+    <link rel="stylesheet" href="//stackpath.bootstrapcdn.com/bootstrap/4.1.3/css/bootstrap.min.css" />
+    <link rel="stylesheet" href="//use.fontawesome.com/releases/v5.3.1/css/all.css" />
+    <link rel="stylesheet" href="/static/style.css" />
+</head>
+<body>
+
+  <script src="https://code.jquery.com/jquery-3.3.1.min.js" crossorigin="anonymous"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.3/umd/popper.min.js" integrity="sha384-ZMP7rVo3mIykV+2+9J3UJ46jBk0WLaUAdn689aCwoqbBJiSnjAK/l8WvCWPIPm49" crossorigin="anonymous"></script>
+  <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.1.3/js/bootstrap.min.js" integrity="sha384-ChfqqxuZUCnJSK3+MXmPNIyE6ZbWh2IMqE241rYiqJxyMiZ6OW/JmZQ5stwEULTy" crossorigin="anonymous"></script>
+    
+
+<script src="https://d3js.org/d3.v4.js"></script>
+<script src="static/d3_sankey.js"></script>
+
+<!-- Error -->
+<div id="myAlert" class="alert alert-dismissible" role="alert" style="display:none;padding: 10px 10px 10px 10px">
+  <strong></strong> 
+  <p></p>
+</div>
+
+<!-- Sankey Diagram -->
+<div id="mySankeyContainer" style="padding: 10px 10px 10px 10px">
+  <script src="static/dna_sankey.js"></script>
+  <script>populateDropDown();</script>
+  <!-- Modal -->
+  <div class="modal fade" id="modalContent" role="dialog" style="display:none">
+    <div class="modal-dialog" role="document">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h4 class="modal-title" id="modalTitle">Modal title</h4>
+          <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+            <span aria-hidden="true">&times;</span>
+          </button>
+        </div>
+        <div class="modal-body" id="modalContent">Here is some content</div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div id="mySankeyDropdown" style="float: left; padding: 10px 10px 10px 10px" class="dropdown">
+    <button class="btn btn-secondary dropdown-toggle" type="button" id="dropdownMenuButton" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+      Feed Job Selection
+    </button>
+    <div class="dropdown-menu" id="feedDropDown" aria-labelledby="dropdownMenuButton"></div>
+  </div>
+  <div id="mySankeyDiagramContainer" style="clear: left; padding: 10px 10px 10px 10px">
+    <!-- Progress Bar -->
+    <div id="work-in-progress" style="display:none;padding: 10px 10px 10px 10px">
+      <p><strong>Loading Sankey Data...</strong></p>
+    </div>
+    <div id="myFeedJobTitle"></div>
+    <div id="mySankeyDigram" style="overflow: auto"></div>
+  </div>
+</div>
+
+</body>

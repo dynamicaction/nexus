@@ -1,0 +1,203 @@
+---
+feedJobName: feedOrderLinesV4
+feedOutput: feedOrderLines
+flows:
+
+### FRAGMENT MERGES
+
+  - flowId: 'tempItemProductLkup' ##fragItemProductLkup Merge
+    flowInputs:
+      - fragItemProductLkup
+
+  - flowId: 'tempOrderLinesPlacedTimestamp' ##fragOrderLinesPlacedTimestamp Merge
+    flowInputs:
+      - fragOrderLinesPlacedTimestamp
+
+  - flowId: 'tempOrderLinesShipments' ##fragOrderLinesShipments Merge
+    flowInputs:
+      - fragOrderLinesShipments
+
+  - flowId: 'tempOrderIdSales' ##Weight Average File based on fragOrderLines
+    flowInputs:
+      - fragOrderLines
+
+  - flowId: 'tempOrderSales' ##Weighted Average Files base on fragOrderLines
+    flowInputs:
+      - fragOrderLines
+
+  - flowId: 'tempBusinessCalendar' ##fragBusinessCalendar Merge
+    flowInputs:
+      - fragBusinessCalendar
+
+  - flowId: 'tempShippingCost' ##fragShippingCost Merge
+    flowInputs:
+      - fragShippingCost
+
+  - flowId: 'tempOrderLinesPromos' ##fragOrderLinesPromos Merge
+    flowInputs:
+      - fragOrderLinesPromos
+
+  - flowId: 'tempOrderLinesItemPromos' ##fragOrderLinesItemPromos Merge
+    flowInputs:
+      - fragOrderLinesItemPromos
+
+  - flowId: 'tempOrderLinesOtherPromoCost' ##fragOrderLinesOtherPromoCost Merge
+    flowInputs:
+      - fragOrderLinesOtherPromoCost
+
+  - flowId: 'tempOrderLinesInventoryFlags' ##fragOrderLinesInventoryFlags Merge
+    flowInputs:
+      - fragOrderLinesInventoryFlags
+
+  - flowId: 'tempProductInventoryCost' ##fragProductInventoryCost Merge
+    flowInputs:
+      - fragProductInventoryCost
+
+  - flowId: 'tempProductSample' ##fragProductSample Merge
+    flowInputs:
+      - fragProductSample
+
+  - flowId: 'tempOrderLinesSample' ##fragOrderLinesSamples Merge
+    flowInputs:
+      - fragOrderLinesSamples
+
+  - flowId: 'tempAttributeValueLkup' ##fragAttributeValueLkup Merge
+    flowInputs:
+      - fragAttributeValueLkup
+
+  - flowId: 'tempShippingCountryLkup' ##fragShippingCountryLkup Merge
+    flowInputs:
+      - fragShippingCountryLkup
+
+  - flowId: 'tempShippingOffsetLkup' ##fragShippingOffsetLkup Merge
+    flowInputs:
+      - fragShippingOffsetLkup
+
+  - flowId: 'tempOrdersRef' ##fragOrdersRef Merge
+    flowInputs:
+      - fragOrdersRef
+
+  - flowId: 'tempOmsProductId' ##fragOmsProductId Merge
+    flowInputs:
+      - fragOmsProductId
+
+  - flowId: 'tempOmsItemId' ##fragOmsItemId Merge
+    flowInputs:
+      - fragOmsItemId
+
+  - flowId: 'tempCurrencyConversionRates' ##fragCurrencyConversionRates Merge
+    flowInputs:
+      - fragCurrencyConversionRates
+
+### TMaps
+
+  - flowId: 'tMap_5' ##Core Flow Item to Product Mappings
+    flowInputs:
+      - tempItemProductLkup
+
+  - flowId: 'tMap_2' ##Core Flow Order Lines Placed Timestamp
+    flowInputs:
+      - tempOrderLinesPlacedTimestamp
+      - tMap_5
+
+  - flowId: 'tMap_30' ##Core Flow Order Lines Shipments Item to Product Mappings
+    flowInputs:
+      - tempOrderLinesShipments
+      - tempItemProductLkup
+
+  - flowId: 'tMap_7' ##Core Flow Order Lines Shipment Information
+    flowInputs:
+      - tMap_2
+      - tMap_30
+
+  - flowId: 'tMap_32' ##Core Flow Order Lines Order Id Sales Item to Product Mappings
+    flowInputs:
+      - tempOrderIdSales
+      - tempItemProductLkup
+
+  - flowId: 'tMap_16' ##Core Flow Order Lines for shipment and order data translations
+    flowInputs:
+      - tMap_7
+      - tMap_32
+      - tempOrderSales
+      - tempBusinessCalendar
+      - tempShippingCost
+
+  - flowId: 'tMap_33' ##Core Flow Order Lines Promos Item to Product Mappings
+    flowInputs:
+      - tempItemProductLkup
+      - tempOrderLinesPromos
+
+  - flowId: 'tMap_9' ##Core Flow Order Lines for fragOrderLinesPromos
+    flowInputs:
+      - tempBusinessCalendar
+      - tMap_33
+      - tMap_16
+
+  - flowId: 'tMap_29' ##Core Flow OrderLines for fragOrderLinesItemPromos
+    flowInputs:
+      - tMap_9
+      - tempOrderLinesItemPromos
+
+  - flowId: 'tMap_35' ##Core Flow OrderLines for fragOrderLinesInventoryFlags
+    flowInputs:
+      - tMap_29
+      - tempOrderLinesInventoryFlags
+
+  - flowId: 'tMap_1' ##Core Flow OrderLines for Inventory Cost
+    flowInputs:
+      - tMap_35
+      - tempProductInventoryCost
+      - tempProductSample
+      - tempOrderLinesSample
+
+  - flowId: 'tMap_23' ##Core Flow Order Lines Other Promo Cost Item to Product Mappings
+    flowInputs:
+      - tempItemProductLkup
+      - tempOrderLinesOtherPromoCost
+
+  - flowId: 'tMap_4' ##Core Flow Order Lines Other Promo Cost
+    flowInputs:
+      - tMap_1
+      - tMap_23
+
+  - flowId: 'tMap_25' ##Core Flow Order Lines Attributes
+    flowInputs:
+      - tMap_4
+      - tempAttributeValueLkup
+
+  - flowId: 'tMap_17' ##Core Flow Order Lines Shipping Country Lookup
+    flowInputs:
+      - tMap_25
+      - tempShippingCountryLkup
+
+  - flowId: 'tMap_31' ##Core Flow Order Lines Attributes
+    flowInputs:
+      - tMap_17
+      - tempShippingOffsetLkup
+
+  - flowId: 'tMap_3' ##Core Flow Order Lines Orders/Product/Item Lookup
+    flowInputs:
+      - tMap_31
+      - tempOrdersRef
+      - tempOmsProductId
+      - tempOmsItemId
+
+  - flowId: 'tMap_22' ##Core Flow Order Lines currency conversion
+    flowInputs:
+      - tMap_3
+      - tempCurrencyConversionRates
+
+  - flowId: 'tMap_14' ##Core Flow Order Lines orderLineId consolidation
+    flowInputs:
+      - tMap_22
+
+  - flowId: 'tMap_44' ##Core Flow Order Lines Promo Translation Merge
+    flowInputs:
+      - fragOrderLinesPromoTranslation
+      - tMap_14
+
+  - flowId: 'tMap_54' ##Core Flow Order Lines Promo Translation Join
+    flowInputs:
+      - tMap_44
+      - tMap_14

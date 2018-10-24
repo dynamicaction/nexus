@@ -1,0 +1,54 @@
+---
+feedOutputs:
+  - id: feedItemAttributes
+    jobName: feedItemAttributesV4
+    description: "This feed contains the mapping of item attributes and their values to individual item ids."
+    schema:
+      - { columnName: item_id, columnType: string }
+      - { columnName: idx, columnType: integer }
+      - { columnName: value, columnType: string }
+  - id: feedOrderLines
+    jobName: feedOrderLinesV4
+    description: "This feed contains order line information by order. This could include shipment information, sales/sales excluding tax, and delivery/shipment/promise timestamp lines.  It also contains several inventory flags to identify backorders, samples, free shipping, and order line attributes."
+    schema:
+      - { columnName: order_id, columnType: string }
+      - { columnName: placed_timestamp, columnType: string }
+      - { columnName: item_id, columnType: string }
+      - { columnName: product_id, columnType: string }
+      - { columnName: seller, columnType: string }
+      - { columnName: quantity, columnType: integer }
+      - { columnName: currency_code, columnType: string }
+      - { columnName: sales, columnType: double }
+      - { columnName: sales_ex_tax, columnType: double }
+      - { columnName: promo_info, columnType: string }
+      - { columnName: other_promo_cost, columnType: double }
+      - { columnName: shipping_amount, columnType: double }
+      - { columnName: shipping_ex_tax, columnType: double }
+      - { columnName: shipping_cost, columnType: double }
+      - { columnName: shipping_country, columnType: string }
+      - { columnName: shipping_region, columnType: string }
+      - { columnName: shipping_postal_code, columnType: string }
+      - { columnName: shipping_method, columnType: string }
+      - { columnName: delivery_location_type, columnType: string }
+      - { columnName: shipment_promise_timestamp, columnType: string }
+      - { columnName: delivery_promise_timestamp, columnType: string }
+      - { columnName: pick_up_in_store_promise_timestamp, columnType: string }
+      - { columnName: is_free_shipping, columnType: string }
+      - { columnName: is_express_shipping, columnType: string }
+      - { columnName: pick_pack_cost, columnType: double }
+      - { columnName: is_backorder, columnType: string }
+      - { columnName: is_preorder, columnType: string }
+      - { columnName: is_ship_from_vendor, columnType: string }
+      - { columnName: is_free_sample, columnType: string }
+      - { columnName: unit_cost, columnType: float }
+      - { columnName: current_price, columnType: float }
+      - { columnName: full_price, columnType: float }
+      - { columnName: price_currency_code, columnType: string }
+      - { columnName: order_line_attribute1, columnType: string }
+      - { columnName: order_line_attribute2, columnType: string }
+      - { columnName: order_line_attribute3, columnType: string }
+      - { columnName: order_line_attribute4, columnType: string }
+      - { columnName: order_line_attribute5, columnType: string  }
+      - { columnName: shipment_promise_date_ref, columnType: integer }
+      - { columnName: delivery_promise_date_ref, columnType: integer }
+      - { columnName: pick_up_in_store_promise_date_ref, columnType: integer }
