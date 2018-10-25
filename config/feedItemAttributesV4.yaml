@@ -1,6 +1,5 @@
 ---
-
-
+sankeyWidth: 1500
 feedJobName: feedItemAttributesV4
 feedOutput: feedItemAttributes
 flows:
