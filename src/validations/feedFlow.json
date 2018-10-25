@@ -1,5 +1,9 @@
 {
   "properties": {
+    "sankeyWidth": {
+      "type": "integer",
+      "minimum": 700
+    },
     "feedOutput": {
       "type": "string",
       "minLength": 4

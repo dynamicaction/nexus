@@ -1,4 +1,5 @@
 ---
+sankeyWidth: 2200
 feedJobName: feedOrderLinesV4
 feedOutput: feedOrderLines
 flows:
