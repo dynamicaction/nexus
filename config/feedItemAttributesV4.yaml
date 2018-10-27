@@ -2,31 +2,42 @@
 feedJobName: feedItemAttributesV4
 feedOutput: feedItemAttributes
 flows:
-  - flowId: fragItemAttributes-Merge
-    flowInputs:
-      - fragItemAttributes
-    schema:
-      - { columnName: item_id, columnType: string }
-      - { columnName: idx, columnType: integer }
-      - { columnName: value, columnType: string }
 
   - flowId: fragItemAttributesSegmentValue-Merge
     flowInputs:
       - fragItemAttributesSegmentValue
     schema:
-      - { columnName: item_id, columnType: string }
       - { columnName: idx, columnType: integer }
       - { columnName: segmentId, columnType: string }
+      - { columnName: value, columnType: string}
+    flowSteps:
+      - type: "AGGREGATE"
+        logic: 
+          aggregationColumns:
+            - idx
+            - segmentId
+          aggregationOperations:
+            - { columnName: value, operation: last() }
+
 
   - flowId: fragItemAttributesSegment-Merge
     flowInputs:
       - fragItemAttributesSegment
     schema:
+      - { columnName: item_id, columnType: string }
       - { columnName: idx, columnType: integer }
       - { columnName: segmentId, columnType: string }
-      - { columnName: value, columnType: string}
+    flowSteps:
+      - type: "AGGREGATE"
+        logic: 
+          aggregationColumns:
+            - item_id
+            - idx
+          aggregationOperations:
+            - { columnName: segmentId, operation: last() }
 
-  - flowId: fragItemAttributesSegmentToValues-Join
+
+  - flowId: fragItemAttributesSegmentToValues-Merge
     flowInputs:
       - fragItemAttributesSegmentValue-Merge
       - fragItemAttributesSegment-Merge
@@ -34,12 +45,33 @@ flows:
       - { columnName: item_id, columnType: string }
       - { columnName: idx, columnType: integer }
       - { columnName: value, columnType: string }
+    flowSteps:
+      - type: "JOIN"
+        logic:
+          joinInputs: 
+            - fragItemAttributesSegmentValue-Merge
+            - fragItemAttributesSegment-Merge
+          joinColumns:
+            - idx
+            - segmentId
+          joinOperations:
+            - { columnName: 'value' }
 
-  - flowId: fragItemAttributes-Join
+
+
+  - flowId: fragItemAttributes-Merge
     flowInputs:
       - fragItemAttributesSegmentToValues-Join
-      - fragItemAttributes-Merge
+      - fragItemAttributes
     schema:
       - { columnName: item_id, columnType: string }
       - { columnName: idx, columnType: integer }
       - { columnName: value, columnType: string }
+    flowSteps:
+      - type: "AGGREGATE"
+        logic: 
+          aggregationColumns:
+            - item_id
+            - idx
+          aggregationOperations:
+            - { columnName: value, operation: last() }

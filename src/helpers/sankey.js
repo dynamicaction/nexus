@@ -9,8 +9,9 @@ const fragInputsSchema = require('/opt/nexus/src/validations/fragInputs.json');
 var readYaml = require('read-yaml-promise');
 
 var Ajv = require('ajv');
-var ajv = new Ajv({allErrors: true});
+var ajv = new Ajv({allErrors: true, $data: true});
 require('ajv-async')(ajv);
+require('ajv-keywords')(ajv);
 
 module.exports = asyncHandler(async (req, res, next) => {
   //Read in our YAML files
@@ -21,21 +22,25 @@ module.exports = asyncHandler(async (req, res, next) => {
   //Validate our feed flow schem and throw an error if we fail
   var validate = ajv.compile(feedFlowSchema);
   var validateResults = validate(feedFlows);
+
   if(! validateResults) {
-    return validationError('The feed flow file fails validation.', validate.errors);
+    let err = validationError('The feed flow file fails validation.', validate.errors);
+    return next(err);
   }
 
   //Validate our feedOutputs schema and throw an error if we fail
   validate = ajv.compile(feedOutputsSchema);
   validateResults = validate(feedOutputs);
   if(! validateResults) {
-    return validationError('The feed outputs file fails validation', validate.errors);
+    let err = validationError('The feed outputs file fails validation', validate.errors);
+    return next(err);
   }
 
   validate = ajv.compile(fragInputsSchema);
   validateResults = validate(fragInputs);
   if(! validateResults) {
-    return validationError('The frag inputs file fails validation.', validate.errors);
+    let err = validationError('The frag inputs file fails validation.', validate.errors);
+    return next(err);
   }
 
   var nodes = [];
@@ -84,6 +89,14 @@ module.exports = asyncHandler(async (req, res, next) => {
       nodeValueCounter++;
     }
   }
+
+  //The last thing we need to do is put in the final output
+  //this is built manually
+  flowData['flowInfo'][feedFlows.feedOutput]={};
+  flowData['flowInfo'][feedFlows.feedOutput]['nodeValue'] = nodeValueCounter;
+  flowData['flowInfo'][feedFlows.feedOutput]['html'] = getFeedOuputHTML(feedFlows.feedOutput);
+  flowData['flowInfo'][feedFlows.feedOutput]['flowhtml'] = '';
+  nodes.push({name: feedFlows.feedOutput});
 
   //Assign weights to the flows based on inputs.
   //We already assigned fragment weights above, so assuming
@@ -156,6 +169,13 @@ module.exports = asyncHandler(async (req, res, next) => {
     });
   });
 
+  //Add the final link
+  var finalLink = {};
+  finalLink.source=nodeValueCounter -1;
+  finalLink.target=nodeValueCounter;
+  finalLink.value=flowData['flowInfo'][nodes[nodeValueCounter -1]['name']]['weight'];
+  links.push(finalLink);
+
   //Attach all necessary data to the flowData array
   flowData.nodes = nodes;
   flowData.links = links;
@@ -171,13 +191,17 @@ module.exports = asyncHandler(async (req, res, next) => {
     var fragmentHTML = '';
     fragInputs['fragInputs'].forEach(function(fragInput) {
       if (fragment === fragInput['id']) {
-        fragmentHTML = '<p>' + fragInput['description'] + '</p>';
-        fragmentHTML = fragmentHTML + '<p>Below is the schema for this input fragment</p>';
-        fragmentHTML = fragmentHTML + '<table class="table table-sm" style="font-size:12px;"><thead><tr><th>Column Name</th><th>Column Type</th></tr></thead>';
+        fragmentHTML = '<p><h6>Description:</h6>' + fragInput['description'] + '</p>';
+        fragmentHTML = fragmentHTML + '<hr><p><h6>Fragment Schema:</h6></p>';
+        fragmentHTML = fragmentHTML + '<div style="padding-left:1em;"><table class="table table-sm" style="font-size:12px;"><thead><tr><th>Column Name</th><th>Column Type</th></tr></thead>';
         fragInput['schema'].forEach(function(column) {
           fragmentHTML = fragmentHTML + '<tbody><tr><td>' + column['columnName'] + '</td><td>' + column['columnType'] + '</td></tr>';
         });
-        fragmentHTML = fragmentHTML + '</tbody></table>';
+        fragmentHTML = fragmentHTML + '</tbody></table></div>';
+        fragmentHTML = fragmentHTML + '<hr><p><h6>Fragment Variations:</h6></p><p style="margin:0;padding-left:1em;">fragDummy_core (dated)</p>'
+        fragmentHTML = fragmentHTML + '<p style="margin:0;padding-left:1em;">fragDummy_undated (nodate)</p><p style="margin:0;padding-left:1em;">fragDummy_nodate (nodate)</p>';
+        fragmentHTML = fragmentHTML + '<hr><p><h6>Feeds Affected:</h6></p><p style="margin:0;padding-left:1em;">feedMadeUpName</p><p style="margin:0;padding-left:1em;">feedSecondMadeUpName</p>';
+        fragmentHTML = fragmentHTML + '<p style="margin:0;padding-left:1em;">feedJustAnotherFeed</p>';
       }
     });
     return fragmentHTML;
@@ -218,7 +242,60 @@ module.exports = asyncHandler(async (req, res, next) => {
 
   //Function that returns the flow logic HTML for our nodes
   function getFlowLogicHTML(flowId) {
-    return flowId;
+    var flowHTML = '';
+    feedFlows['flows'].forEach(function(flow) {
+      if (flowId === flow['flowId']) {
+        flow['flowSteps'].forEach(function(flowStep) {
+          switch(flowStep['type']) {
+            case 'AGGREGATE':
+              flowHTML = flowHTML + '<hr><p>The flow input is aggregated across the following columns:</p>';
+              flowHTML = flowHTML + '<div style="padding-top:1em;padding-left:1em;padding-bottom:1em;"><table class="table table-sm" style="font-size:12px;"><thead><tr><th>Column</th></tr></thead>'
+              flowStep['logic']['aggregationColumns'].forEach(function(column) {
+                flowHTML = flowHTML + '<tr><td>' + column + '</td></tr>';
+              });
+              flowHTML = flowHTML + '</table></div>'
+
+              if (flowStep['logic'].hasOwnProperty('aggregationOperations')) {
+                flowHTML = flowHTML + '<p>With the following operations are applied to their respective column:</p>';
+                flowHTML = flowHTML + '<div style="padding-top:1em;padding-left:1em;padding-bottom:1em;"><table class="table table-sm" style="font-size:12px;"><thead><tr><th>Column</th><th>Operation</th></tr></thead>'
+                flowStep['logic']['aggregationOperations'].forEach(function(operation) {
+                  flowHTML = flowHTML + '<tr><td>' + operation['columnName'] + '</td><td>' + operation['operation'] + '</td></tr>';
+                });
+                flowHTML = flowHTML + '</table></div>'
+              }
+              break;
+            case 'JOIN':
+              break;
+            case 'HTML':
+              flowHTML = flowHTML + '<hr>' + flowStep['logic'];
+              break;
+            case 'MARKDOWN':
+              break;
+            default:
+              flowHTML = '<hr><p>No flowSteps have been defined</p>';
+          }
+        });
+      }
+    });
+
+    return flowHTML;
+  }
+
+  //Function that returns the output logic HTML for our feed job
+  function getFeedOuputHTML(feedName) {
+    var feedHTML = '';
+    feedOutputs['feedOutputs'].forEach(function(feedOutput) {
+      if (feedName === feedOutput['id']) {
+        feedHTML = '<p><h6>Description:</h6>' + feedOutput['description'] + '</p>';
+        feedHTML = feedHTML + '<hr><p><h6>Feed Schema:</h6></p>';
+        feedHTML = feedHTML + '<div style="padding-left:1em;"><table class="table table-sm" style="font-size:12px;"><thead><tr><th>Column Name</th><th>Column Type</th></tr></thead>';
+        feedOutput['schema'].forEach(function(column) {
+          feedHTML = feedHTML + '<tbody><tr><td>' + column['columnName'] + '</td><td>' + column['columnType'] + '</td></tr>';
+        });
+        feedHTML = feedHTML + '</tbody></table></div>';
+      }
+    });
+    return feedHTML;
   }
 
   //Just a helper function to help validate some data
@@ -229,6 +306,6 @@ module.exports = asyncHandler(async (req, res, next) => {
     });
     let err = new Error(errString);
     err.status = 200;
-    return next(err);
+    return err;
   }
 });

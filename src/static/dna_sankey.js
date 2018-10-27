@@ -19,7 +19,6 @@ function drawFeedSankey(feedId) {
       return divError('Validation Error!', graph.error);
     }
 
-    console.log(graph);
     var sankeyWidth = (graph.hasOwnProperty('sankeyWidth')) ? graph['sankeyWidth']: 700;
 
     // Variables to hold sizing of the sankey

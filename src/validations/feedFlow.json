@@ -29,6 +29,166 @@
               "type": "string",
               "minLength": 4
             }
+          },
+          "schema": {
+            "type": "array",
+            "minItems": 2,
+            "items": {
+              "type": "object",
+              "properties": {
+                "columnName": {
+                  "type": "string",
+                  "minLength": 3
+                },
+                "columnType": {
+                  "type": "string",
+                  "minLength": 4,
+                  "enum": [
+                    "string",
+                    "double",
+                    "integer",
+                    "float",
+                    "boolean",
+                    "date"
+                  ]
+                }
+              },
+              "required": [
+                "columnName",
+                "columnType"
+              ]
+            }
+          },
+          "flowSteps": {
+            "type": "array",
+            "minItems": 1,
+            "items": {
+              "type": "object",
+              "properties": {
+                "type": {
+                  "type": "string",
+                  "enum": [
+                    "AGGREGATE",
+                    "JOIN",
+                    "HTML",
+                    "MARKDOWN"
+                  ]
+                }
+              },
+              "select": { "$data": "0/type"},
+              "selectCases": {
+                "AGGREGATE": {
+                  "properties": {
+                    "type": {},
+                    "logic": {
+                      "type": "object",
+                      "properties": {
+                        "aggregationColumns": {
+                          "type": "array",
+                          "minItems": 1,
+                          "items": {
+                            "type": "string",
+                            "minLength": 3
+                          }
+                        },
+                        "aggregationOperations": {
+                          "type": "array",
+                          "minItems": 1,
+                          "items": {
+                            "type": "object",
+                            "properties": {
+                              "columnName": {
+                                "type": "string",
+                                "minLength": 3
+                              },
+                              "operation": {
+                                "type": "string",
+                                "minLength": 4
+                              }
+                            },
+                            "required": [
+                                "columnName",
+                                "operation"
+                            ]
+                          }
+                        }
+                      },
+                      "required": [
+                        "aggregationColumns",
+                        "aggregationOperations"
+                      ]
+                    }
+                  }
+                },
+                "JOIN": {
+                  "properties": {
+                    "type": {},
+                    "logic": {
+                      "type": "object","properties": {
+                        "joinInputs": {
+                          "type": "array",
+                          "minItems": 2,
+                          "items": {
+                            "type": "string",
+                            "minLength": 3
+                          }
+                        },
+                        "joinColumns": {
+                          "type": "array",
+                          "minItems": 1,
+                          "items": {
+                            "type": "string",
+                            "minLength": 3
+                          }
+                        },
+                        "joinOperations": {
+                          "type": "array",
+                          "minItems": 1,
+                          "items": {
+                            "type": "object",
+                            "properties": {
+                              "columnName": {
+                                "type": "string",
+                                "minLength": 3
+                              },
+                              "condition": {
+                                "type": "string",
+                                "minLength": 3
+                              }
+                            },
+                            "required": ["columnName"]
+                          }
+                        }
+                      },
+                      "required": [
+                        "joinInputs",
+                        "joinColumns",
+                        "joinOperations"
+                      ]
+                    }
+                  }
+                },
+                "HTML": {
+                  "properties": {
+                    "logic": {
+                      "type": "string"
+                    }
+                  }
+                },
+                "MARKDOWN": {
+                  "properties": {
+                    "logic": {
+                      "type": "string"
+                    }
+                  }
+                }
+              },
+              "selectDefault": false,
+              "required": [
+                "logic",
+                "type"
+              ]
+            }
           }
         }
       }
