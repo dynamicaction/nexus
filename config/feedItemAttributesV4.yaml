@@ -3,7 +3,7 @@ feedJobName: feedItemAttributesV4
 feedOutput: feedItemAttributes
 flows:
 
-  - flowId: fragItemAttributesSegmentValue-Merge
+  - flowId: fragItemAttributesSegmentValue_Merge
     flowInputs:
       - fragItemAttributesSegmentValue
     schema:
@@ -20,7 +20,7 @@ flows:
             - { columnName: value, operation: last() }
 
 
-  - flowId: fragItemAttributesSegment-Merge
+  - flowId: fragItemAttributesSegment_Merge
     flowInputs:
       - fragItemAttributesSegment
     schema:
@@ -37,10 +37,10 @@ flows:
             - { columnName: segmentId, operation: last() }
 
 
-  - flowId: fragItemAttributesSegmentToValues-Merge
+  - flowId: fragItemAttributesSegmentToValues_Join
     flowInputs:
-      - fragItemAttributesSegmentValue-Merge
-      - fragItemAttributesSegment-Merge
+      - fragItemAttributesSegmentValue_Merge
+      - fragItemAttributesSegment_Merge
     schema:
       - { columnName: item_id, columnType: string }
       - { columnName: idx, columnType: integer }
@@ -49,8 +49,8 @@ flows:
       - type: "JOIN"
         logic:
           joinInputs: 
-            - fragItemAttributesSegmentValue-Merge
-            - fragItemAttributesSegment-Merge
+            - fragItemAttributesSegmentValue_Merge
+            - fragItemAttributesSegment_Merge
           joinColumns:
             - idx
             - segmentId
@@ -61,7 +61,7 @@ flows:
 
   - flowId: fragItemAttributes-Merge
     flowInputs:
-      - fragItemAttributesSegmentToValues-Join
+      - fragItemAttributesSegmentToValues_Join
       - fragItemAttributes
     schema:
       - { columnName: item_id, columnType: string }

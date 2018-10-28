@@ -178,7 +178,7 @@ function divError(title,body) {
 
 function openModal(title,body) {
   var mymodal = $('#modalContent');
-  mymodal.find('.modal-title').html('<h3>' + title + '</h3>');
+  mymodal.find('.modal-title').html(title);
   mymodal.find('.modal-body').html(body);
   mymodal.modal('show');
   return true;
