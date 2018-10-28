@@ -44,6 +44,49 @@ fragInputs:
       - { columnName: order_line_attribute4, columnType: string }
       - { columnName: order_line_attribute5, columnType: string }
 
+  - id: fragReturns
+    isCoure: true
+    description: The core fragment for all returns in a given day
+    schema:
+      - { columnName: orderLineId, columnType: string }
+      - { columnName: order_id, columnType: string }
+      - { columnName: item_id, columnType: string }
+      - { columnName: product_id, columnType: string }
+      - { columnName: seller, columnType: string }
+      - { columnName: quantity, columnType: integer }
+      - { columnName: return_timestamp, columnType: string }
+      - { columnName: channel, columnType: string }
+      - { columnName: site_cat1, columnType: string }
+      - { columnName: site_cat2, columnType: string }
+      - { columnName: return_reason_internal, columnType: string }
+      - { columnName: return_reason_display, columnType: string }
+      - { columnName: returned_to_stock, columnType: string }
+      - { columnName: refund_amount, columnType: double }
+      - { columnName: currency_code, columnType: string }
+      - { columnName: return_shipping_cost, columnType: double }
+      - { columnName: returned_to_store, columnType: string }
+
+  - id: fragReturnReasons
+    description: Mapping fragment that will set the return reason filed based on 'order_id' and 'item_id'
+    schema:
+      - { columnName: orderLineId, columnType: integer }
+      - { columnName: order_id, columnType: string }
+      - { columnName: item_id, columnType: string }
+      - { columnName: reason, columnType: string }
+
+  - id: fragReturnsReasonsLkup
+    description: Mapping fragment that will reset the 'return_reason_internal' column to 'reasonText' if it's currently 'reason'
+    schema:
+      - { columnName: reason, columnType: string }
+      - { columnName: reasonText, columnType: string }
+
+  - id: fragOrderLineItemLkup
+    description: This fragment is utilized in the event that you need to set the item_id in the feed based on an order_id/orderLineId combination.
+    schema:
+      - { columnName: orderLineId, columnType: integer }
+      - { columnName: order_id, columnType: string }
+      - { columnName: item_id, columnType: string }
+
   - id: fragItemProductLkup
     description: Mapping fragment that will set the 'product_id' field based on a given 'item_id'
     schema:

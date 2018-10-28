@@ -1,0 +1,351 @@
+---
+feedJobName: feedReturnsV4
+feedOutput: feedReturns
+sankeyWidth: 1200
+flows:
+
+  - flowId: fragReturnReasons_Merge
+    flowInputs:
+      - fragReturnReasons
+    schema:
+      - { columnName: orderLineId, columnType: integer }
+      - { columnName: order_id, columnType: string }
+      - { columnName: item_id, columnType: string }
+      - { columnName: reason, columnType: string }
+    flowSteps:
+      - type: "AGGREGATE"
+        logic: 
+          aggregationColumns:
+            - orderLineId
+            - order_id
+            - item_id
+          aggregationOperations:
+            - { columnName: reason, operation: last() }
+
+
+  - flowId: fragReturnsReasonsLkup_Merge
+    flowInputs:
+      - fragReturnsReasonsLkup
+    schema:
+      - { columnName: reason, columnType: string }
+      - { columnName: reasonText, columnType: string }
+    flowSteps:
+      - type: "AGGREGATE"
+        logic: 
+          aggregationColumns:
+            - reason
+          aggregationOperations:
+            - { columnName: reasonText, operation: first() }
+
+
+  - flowId: fragOrdersRef_Merge
+    flowInputs:
+      - fragOrdersRef
+    schema:
+      - { columnName: order_id, columnType: string }
+      - { columnName: webOrderId, columnType: string }
+    flowSteps:
+      - type: "AGGREGATE"
+        logic: 
+          aggregationColumns:
+            - orderId
+          aggregationOperations:
+            - { columnName: webOrderId, operation: last() }
+
+  - flowId: fragOmsProductId_Merge
+    flowInputs:
+      - fragOmsProductId
+    schema:
+      - { columnName: omsProductID, columnType: string }
+      - { columnName: product_id, columnType: string }
+    flowSteps:
+      - type: "AGGREGATE"
+        logic: 
+          aggregationColumns:
+            - omsProductID
+          aggregationOperations:
+            - { columnName: product_id, operation: last() }
+
+
+  - flowId: fragOmsItemId_Merge
+    flowInputs:
+      - fragOmsItemId
+    schema:
+      - { columnName: omsItemId, columnType: string }
+      - { columnName: item_id, columnType: string }
+    flowSteps:
+      - type: "AGGREGATE"
+        logic: 
+          aggregationColumns:
+            - omsItemId
+          aggregationOperations:
+            - { columnName: item_id, operation: last() }
+
+  - flowId: fragItemProductLkup_Merge
+    flowInputs:
+      - fragItemProductLkup
+    schema:
+      - { columnName: item_id, columnType: string }
+      - { columnName: product_id, columnType: string }
+    flowSteps:
+      - type: "AGGREGATE"
+        logic: 
+          aggregationColumns:
+            - item_id
+          aggregationOperations:
+            - { columnName: product_id, operation: last() }    
+
+  - flowId: fragOrderLineItemLkup_Merge
+    flowInputs:
+      - fragOrderLineItemLkup
+    schema:
+      - { columnName: orderLineId, columnType: integer }
+      - { columnName: order_id, columnType: string }
+      - { columnName: item_id, columnType: string }
+    flowSteps:
+      - type: "AGGREGATE"
+        logic: 
+          aggregationColumns:
+            - order_id
+            - orderLineId
+          aggregationOperations:
+            - { columnName: item_id, operation: first() }
+
+  - flowId: fragOrderLineItemLkup_CoreFlowJoin
+    flowInputs:
+      - fragOrderLineItemLkup_Merge
+      - fragReturns
+    schema:
+      - { columnName: orderLineId, columnType: string }
+      - { columnName: order_id, columnType: string }
+      - { columnName: item_id, columnType: string }
+      - { columnName: product_id, columnType: string }
+      - { columnName: seller, columnType: string }
+      - { columnName: quantity, columnType: integer }
+      - { columnName: return_timestamp, columnType: string }
+      - { columnName: channel, columnType: string }
+      - { columnName: site_cat1, columnType: string }
+      - { columnName: site_cat2, columnType: string }
+      - { columnName: return_reason_internal, columnType: string }
+      - { columnName: return_reason_display, columnType: string }
+      - { columnName: returned_to_stock, columnType: string }
+      - { columnName: refund_amount, columnType: double }
+      - { columnName: currency_code, columnType: string }
+      - { columnName: return_shipping_cost, columnType: double }
+      - { columnName: returned_to_store, columnType: string }
+    flowSteps:
+      - type: "JOIN"
+        logic: 
+          joinInputs:
+            - fragOrderLineItemLkup_Merge
+            - fragReturns
+          joinColumns:
+            - order_id
+            - orderLineId
+          joinOperations:
+            - { columnName: item_id, operation: orderLineId is not null}
+  
+
+  - flowId: fragReturnReasons_CoreFlowJoin
+    flowInputs:
+      - fragOrderLineItemLkup_Merge
+      - fragReturnReasons_Merge
+      - fragOrderLineItemLkup_CoreFlowJoin
+    schema:
+      - { columnName: orderLineId, columnType: string }
+      - { columnName: order_id, columnType: string }
+      - { columnName: item_id, columnType: string }
+      - { columnName: product_id, columnType: string }
+      - { columnName: seller, columnType: string }
+      - { columnName: quantity, columnType: integer }
+      - { columnName: return_timestamp, columnType: string }
+      - { columnName: channel, columnType: string }
+      - { columnName: site_cat1, columnType: string }
+      - { columnName: site_cat2, columnType: string }
+      - { columnName: return_reason_internal, columnType: string }
+      - { columnName: return_reason_display, columnType: string }
+      - { columnName: returned_to_stock, columnType: string }
+      - { columnName: refund_amount, columnType: double }
+      - { columnName: currency_code, columnType: string }
+      - { columnName: return_shipping_cost, columnType: double }
+      - { columnName: returned_to_store, columnType: string }
+    flowSteps:
+      - type: MARKDOWN
+        logic: "\n
+        **OrderLineId Item Map**\n
+        \n
+        Since the fragment fragReturnReasons has item_id in it, the flow first joins together `fragOrderLineItemLkup_Merge` and `fragReturnReasons_Merge` using `orderLineId` and `orderId` and setting the `item_id` where joined producing the output of columns.\n
+        \n
+        - orderLineId\n
+        - order_id\n
+        - item_id\n
+        - return\\_reason\\_internal\n
+        \n
+        -----
+        \n
+        **Core Flow Merge**\n
+        \n
+        Data from the step above is joined into main core flow joining the following `orderLineId`, `order_id` and `item_id` and setting the `return_reason_internal` field of the main core flow.\n"
+      - type: HTML
+        logic: "<p>This was only done this way to show Markdown and HTML Functionality.</p>"
+
+  - flowId: fragReturnReasonsLkup_CoreFlowJoin
+    flowInputs:
+      - fragReturnReasons_CoreFlowJoin
+      - fragReturnsReasonsLkup_Merge
+    schema:
+      - { columnName: orderLineId, columnType: string }
+      - { columnName: order_id, columnType: string }
+      - { columnName: item_id, columnType: string }
+      - { columnName: product_id, columnType: string }
+      - { columnName: seller, columnType: string }
+      - { columnName: quantity, columnType: integer }
+      - { columnName: return_timestamp, columnType: string }
+      - { columnName: channel, columnType: string }
+      - { columnName: site_cat1, columnType: string }
+      - { columnName: site_cat2, columnType: string }
+      - { columnName: return_reason_internal, columnType: string }
+      - { columnName: return_reason_display, columnType: string }
+      - { columnName: returned_to_stock, columnType: string }
+      - { columnName: refund_amount, columnType: double }
+      - { columnName: currency_code, columnType: string }
+      - { columnName: return_shipping_cost, columnType: double }
+      - { columnName: returned_to_store, columnType: string }
+    flowSteps:
+      - type: "JOIN"
+        logic: 
+          joinInputs:
+            - fragReturnReasons_CoreFlowJoin
+            - fragReturnsReasonsLkup_Merge
+          joinColumns:
+            - reason
+          joinOperations:
+            - { columnName: return_reason_internal, operation: reason is not null}
+
+  - flowId: fragItemProductLkup_CoreFlowJoin
+    flowInputs:
+      - fragReturnReasonsLkup_CoreFlowJoin
+      - fragItemProductLkup_Merge
+    schema:
+      - { columnName: orderLineId, columnType: string }
+      - { columnName: order_id, columnType: string }
+      - { columnName: item_id, columnType: string }
+      - { columnName: product_id, columnType: string }
+      - { columnName: seller, columnType: string }
+      - { columnName: quantity, columnType: integer }
+      - { columnName: return_timestamp, columnType: string }
+      - { columnName: channel, columnType: string }
+      - { columnName: site_cat1, columnType: string }
+      - { columnName: site_cat2, columnType: string }
+      - { columnName: return_reason_internal, columnType: string }
+      - { columnName: return_reason_display, columnType: string }
+      - { columnName: returned_to_stock, columnType: string }
+      - { columnName: refund_amount, columnType: double }
+      - { columnName: currency_code, columnType: string }
+      - { columnName: return_shipping_cost, columnType: double }
+      - { columnName: returned_to_store, columnType: string }
+    flowSteps:
+      - type: "JOIN"
+        logic: 
+          joinInputs:
+            - fragReturnReasonsLkup_CoreFlowJoin
+            - fragItemProductLkup_Merge
+          joinColumns:
+            - item_id
+          joinOperations:
+            - { columnName: product_id, operation: item_id is not null}
+
+  - flowId: OMSFragments_CoreFlowJoin
+    flowInputs:
+      - fragItemProductLkup_CoreFlowJoin
+      - fragOmsItemId_Merge
+      - fragOmsProductId_Merge
+      - fragOrdersRef_Merge
+    schema:
+      - { columnName: orderLineId, columnType: string }
+      - { columnName: order_id, columnType: string }
+      - { columnName: item_id, columnType: string }
+      - { columnName: product_id, columnType: string }
+      - { columnName: seller, columnType: string }
+      - { columnName: quantity, columnType: integer }
+      - { columnName: return_timestamp, columnType: string }
+      - { columnName: channel, columnType: string }
+      - { columnName: site_cat1, columnType: string }
+      - { columnName: site_cat2, columnType: string }
+      - { columnName: return_reason_internal, columnType: string }
+      - { columnName: return_reason_display, columnType: string }
+      - { columnName: returned_to_stock, columnType: string }
+      - { columnName: refund_amount, columnType: double }
+      - { columnName: currency_code, columnType: string }
+      - { columnName: return_shipping_cost, columnType: double }
+      - { columnName: returned_to_store, columnType: string }
+    flowSteps:
+      - type: "JOIN"
+        logic: 
+          joinInputs:
+            - fragItemProductLkup_CoreFlowJoin
+            - fragOmsItemId_Merge
+          joinColumns:
+            - item_id
+          joinOperations:
+            - { columnName: product_id, operation: item_id is not null}
+      - type: "JOIN"
+        logic: 
+          joinInputs:
+            - fragItemProductLkup_CoreFlowJoin
+            - fragOmsProductId_Merge
+          joinColumns:
+            - omsProductId
+          joinOperations:
+            - { columnName: product_id, operation: omsProductId is not null}
+      - type: "JOIN"
+        logic: 
+          joinInputs:
+            - fragItemProductLkup_CoreFlowJoin
+            - fragOrdersRef_Merge
+          joinColumns:
+            - orderId
+          joinOperations:
+            - { columnName: webOrderId, operation: useRef is set}
+
+  - flowId: CoreFlowFinalAggregation
+    flowInputs:
+      - OMSFragments_CoreFlowJoin
+    schema:
+      - { columnName: order_id, columnType: string }
+      - { columnName: item_id, columnType: string }
+      - { columnName: product_id, columnType: string }
+      - { columnName: seller, columnType: string }
+      - { columnName: quantity, columnType: integer }
+      - { columnName: return_timestamp, columnType: string }
+      - { columnName: channel, columnType: string }
+      - { columnName: site_cat1, columnType: string }
+      - { columnName: site_cat2, columnType: string }
+      - { columnName: return_reason_internal, columnType: string }
+      - { columnName: return_reason_display, columnType: string }
+      - { columnName: returned_to_stock, columnType: string }
+      - { columnName: refund_amount, columnType: double }
+      - { columnName: currency_code, columnType: string }
+      - { columnName: return_shipping_cost, columnType: double }
+      - { columnName: returned_to_store, columnType: string }
+    flowSteps:
+      - type: "AGGREGATE"
+        logic:
+          aggregationColumns:
+            - order_id
+            - item_id
+            - product_id
+            - seller
+            - return_timestamp
+            - channel
+            - site_cat1
+            - site_cat2
+            - return_reason_internal
+            - return_reason_display
+            - returned_to_stock
+            - currency_code
+            - returned_to_store
+          aggregationOperations:
+            - { columnName: quantity, operation: sum() }
+            - { columnName: refund_amount, operation: sum() }
+            - { columnName: return_shipping_cost, operation: sum() }

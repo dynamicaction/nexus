@@ -7,6 +7,26 @@ feedOutputs:
       - { columnName: item_id, columnType: string }
       - { columnName: idx, columnType: integer }
       - { columnName: value, columnType: string }
+  - id: feedReturns
+    jobName: feedReturnsV4
+    description: "This feed contains all returns processed for a given day"
+    schema:
+      - { columnName: order_id, columnType: string }
+      - { columnName: item_id, columnType: string }
+      - { columnName: product_id, columnType: string }
+      - { columnName: seller, columnType: string }
+      - { columnName: quantity, columnType: integer }
+      - { columnName: return_timestamp, columnType: string }
+      - { columnName: channel, columnType: string }
+      - { columnName: site_cat1, columnType: string }
+      - { columnName: site_cat2, columnType: string }
+      - { columnName: return_reason_internal, columnType: string }
+      - { columnName: return_reason_display, columnType: string }
+      - { columnName: returned_to_stock, columnType: string }
+      - { columnName: refund_amount, columnType: double }
+      - { columnName: currency_code, columnType: string }
+      - { columnName: return_shipping_cost, columnType: double }
+      - { columnName: returned_to_store, columnType: string }
   - id: feedOrderLines
     jobName: feedOrderLinesV4
     description: "This feed contains order line information by order. This could include shipment information, sales/sales excluding tax, and delivery/shipment/promise timestamp lines.  It also contains several inventory flags to identify backorders, samples, free shipping, and order line attributes."
