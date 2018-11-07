@@ -1,7 +1,7 @@
 ---
 feedJobName: feedOrderLinesV4
 feedOutput: feedOrderLines
-sankeyWidth: 2200
+sankeyWidth: 4000
 flows:
   ### Flow that reads in all fragItemProductLkup files
   - flowId: fragItemProductLkup_Merge
@@ -122,46 +122,6 @@ flows:
           - { columnName: pick_pack_cost, operation: last() }
           - { columnName: originalDateTime, operation: last() }
           - { columnName: order_id_type, operation: last() }
-
-  ### Flow which joins fragOrderLinesShipments into the main flow
-  - flowId: fragOrderLinesShipments_CoreFlowJoin
-    flowInputs:
-      - fragOrderLinesShipments_Merge
-      - fragItemProductLkup_Merge
-    schema:
-      - { columnName: orderLineId, columnType: string }
-      - { columnName: order_id, columnType: string }
-      - { columnName: item_id, columnType: string }
-      - { columnName: product_id, columnType: string }
-      - { columnName: quantity, columnType: integer }
-      - { columnName: shipping_amount, columnType: double }
-      - { columnName: shipping_ex_tax, columnType: double }
-      - { columnName: shipping_cost, columnType: double }
-      - { columnName: shipping_country, columnType: string }
-      - { columnName: shipping_region, columnType: string }
-      - { columnName: shipping_postal_code, columnType: string }
-      - { columnName: shipping_method, columnType: string }
-      - { columnName: delivery_location_type, columnType: string }
-      - { columnName: shipment_promise_timestamp, columnType: date }
-      - { columnName: shipment_promise_date_ref, columnType: integer }
-      - { columnName: delivery_promise_timestamp, columnType: date }
-      - { columnName: delivery_promise_date_ref, columnType: integer }
-      - { columnName: pick_up_in_store_promise_timestamp, columnType: date }
-      - { columnName: pick_up_in_store_promise_date_ref, columnType: integer }
-      - { columnName: is_free_shipping, columnType: boolean }
-      - { columnName: is_express_shipping, columnType: boolean }
-      - { columnName: pick_pack_cost, columnType: double }
-      - { columnName: originalDateTime, columnType: date }
-    flowSteps:
-      - type: "JOIN"
-        logic: 
-          joinInputs:
-            - fragOrderLinesShipments_Merge
-            - fragItemProductLkup_Merge
-          joinColumns:
-            - item_id
-          joinOperations:
-          - {columnName: product_id, operation: 'item_id is not null'}
 
   - flowId: tempOrderIdSales ##Weighted Average File based on fragOrderLines
     flowInputs:
@@ -562,28 +522,50 @@ flows:
           joinOperations:
             - {columnName: placed_timestamp, operation: order_id is not null}
 
-  - flowId: tMap_30  ##Core Flow Order Lines Shipments Item to Product Mappings
+  ### Core Flow Order Lines Shipments Item to Product Mappings  tMap_30
+  - flowId: fragOrderLinesShipments_ItemProductLookup
     flowInputs:
-      - fragOrderLinesShipments_CoreFlowJoin
+      - fragOrderLinesShipments_Merge
       - fragItemProductLkup_Merge
-#    schema:
-#      - { columnName: order_id, columnType: string }
-#      - { columnName: order_id, columnType: string }
+    schema:
+      - { columnName: orderLineId, columnType: string }
+      - { columnName: order_id, columnType: string }
+      - { columnName: item_id, columnType: string }
+      - { columnName: product_id, columnType: string }
+      - { columnName: quantity, columnType: integer }
+      - { columnName: shipping_amount, columnType: double }
+      - { columnName: shipping_ex_tax, columnType: double }
+      - { columnName: shipping_cost, columnType: double }
+      - { columnName: shipping_country, columnType: string }
+      - { columnName: shipping_region, columnType: string }
+      - { columnName: shipping_postal_code, columnType: string }
+      - { columnName: shipping_method, columnType: string }
+      - { columnName: delivery_location_type, columnType: string }
+      - { columnName: shipment_promise_timestamp, columnType: date }
+      - { columnName: shipment_promise_date_ref, columnType: integer }
+      - { columnName: delivery_promise_timestamp, columnType: date }
+      - { columnName: delivery_promise_date_ref, columnType: integer }
+      - { columnName: pick_up_in_store_promise_timestamp, columnType: date }
+      - { columnName: pick_up_in_store_promise_date_ref, columnType: integer }
+      - { columnName: is_free_shipping, columnType: boolean }
+      - { columnName: is_express_shipping, columnType: boolean }
+      - { columnName: pick_pack_cost, columnType: double }
+      - { columnName: originalDateTime, columnType: date }
     flowSteps:
       - type: "JOIN"
-        logic:
+        logic: 
           joinInputs:
-            - fragX
-            - fragXX
+            - fragOrderLinesShipments_Merge
+            - fragItemProductLkup_Merge
           joinColumns:
-            - order_id
+            - item_id
           joinOperations:
-            - { columnName: item_id, operation: orderLineId is not null}
+          - {columnName: product_id, operation: 'item_id is not null'}
 
-  - flowId: tMap_7  ##Core Flow Order Lines Shipment Information
+  - flowId: fragOrderLinesShipments_CoreFlowJoin  ##Core Flow Order Lines Shipment Information tMap_7
     flowInputs:
       - tMap_2
-      - tMap_30
+      - fragOrderLinesShipments_ItemProductLookup  #tMap_30
 #    schema:
 #      - { columnName: order_id, columnType: string }
 #      - { columnName: order_id, columnType: string }
@@ -618,7 +600,7 @@ flows:
 
   - flowId: tMap_16  ##Core Flow Order Lines for shipment and order data translations
     flowInputs:
-      - tMap_7
+      - fragOrderLinesShipments_CoreFlowJoin
       - tMap_32
       - tempOrderSales
       - fragBusinessCalendar_Merge

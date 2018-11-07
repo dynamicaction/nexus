@@ -7,6 +7,7 @@ feedOutputs:
       - { columnName: item_id, columnType: string }
       - { columnName: idx, columnType: integer }
       - { columnName: value, columnType: string }
+      
   - id: feedReturns
     jobName: feedReturnsV4
     description: "This feed contains all returns processed for a given day"
@@ -27,12 +28,13 @@ feedOutputs:
       - { columnName: currency_code, columnType: string }
       - { columnName: return_shipping_cost, columnType: double }
       - { columnName: returned_to_store, columnType: string }
+      
   - id: feedOrderLines
     jobName: feedOrderLinesV4
     description: "This feed contains order line information by order. This could include shipment information, sales/sales excluding tax, and delivery/shipment/promise timestamp lines.  It also contains several inventory flags to identify backorders, samples, free shipping, and order line attributes."
     schema:
       - { columnName: order_id, columnType: string }
-      - { columnName: placed_timestamp, columnType: string }
+      - { columnName: placed_timestamp, columnType: date }
       - { columnName: item_id, columnType: string }
       - { columnName: product_id, columnType: string }
       - { columnName: seller, columnType: string }
@@ -50,16 +52,16 @@ feedOutputs:
       - { columnName: shipping_postal_code, columnType: string }
       - { columnName: shipping_method, columnType: string }
       - { columnName: delivery_location_type, columnType: string }
-      - { columnName: shipment_promise_timestamp, columnType: string }
-      - { columnName: delivery_promise_timestamp, columnType: string }
-      - { columnName: pick_up_in_store_promise_timestamp, columnType: string }
-      - { columnName: is_free_shipping, columnType: string }
-      - { columnName: is_express_shipping, columnType: string }
+      - { columnName: shipment_promise_timestamp, columnType: date }
+      - { columnName: delivery_promise_timestamp, columnType: date }
+      - { columnName: pick_up_in_store_promise_timestamp, columnType: date }
+      - { columnName: is_free_shipping, columnType: boolean }
+      - { columnName: is_express_shipping, columnType: boolean }
       - { columnName: pick_pack_cost, columnType: double }
-      - { columnName: is_backorder, columnType: string }
-      - { columnName: is_preorder, columnType: string }
-      - { columnName: is_ship_from_vendor, columnType: string }
-      - { columnName: is_free_sample, columnType: string }
+      - { columnName: is_backorder, columnType: boolean }
+      - { columnName: is_preorder, columnType: boolean }
+      - { columnName: is_ship_from_vendor, columnType: boolean }
+      - { columnName: is_free_sample, columnType: boolean }
       - { columnName: unit_cost, columnType: float }
       - { columnName: current_price, columnType: float }
       - { columnName: full_price, columnType: float }
@@ -69,6 +71,3 @@ feedOutputs:
       - { columnName: order_line_attribute3, columnType: string }
       - { columnName: order_line_attribute4, columnType: string }
       - { columnName: order_line_attribute5, columnType: string  }
-      - { columnName: shipment_promise_date_ref, columnType: integer }
-      - { columnName: delivery_promise_date_ref, columnType: integer }
-      - { columnName: pick_up_in_store_promise_date_ref, columnType: integer }
