@@ -75,7 +75,6 @@ flows:
       - fragOrderLinesShipments
 ###            - fragTransOrderIdWa_Merge
 ###            - fragTransOrderLineIdWa_Merge
-#xxx
     schema:
       - { columnName: orderLineId, columnType: string }
       - { columnName: order_id, columnType: string }
@@ -184,7 +183,7 @@ flows:
 ########################################
 ### add in content below
 ########################################
-  - flowId: tempShippingCost ##fragShippingCost Merge
+  - flowId: fragShippingCost_Merge ##tempShippingCost
     flowInputs:
       - fragShippingCost
     schema:
@@ -199,7 +198,7 @@ flows:
           aggregationOperations:
             - { columnName: item_id, operation: first() }
 
-  - flowId: tempOrderLinesPromos ##fragOrderLinesPromos Merge
+  - flowId: fragOrderLinesPromos_Merge ##tempOrderLinesPromos
     flowInputs:
       - fragOrderLinesPromos
     schema:
@@ -214,7 +213,7 @@ flows:
           aggregationOperations:
             - { columnName: item_id, operation: first() }
 
-  - flowId: tempOrderLinesItemPromos ##fragOrderLinesItemPromos Merge
+  - flowId: fragOrderLinesItemPromos_Merge ##tempOrderLinesItemPromos
     flowInputs:
       - fragOrderLinesItemPromos
     schema:
@@ -229,8 +228,7 @@ flows:
           aggregationOperations:
             - { columnName: item_id, operation: first() }
 
-
-  - flowId: tempOrderLinesOtherPromoCost ##fragOrderLinesOtherPromoCost Merge
+  - flowId: fragOrderLinesOtherPromoCost_Merge ##tempOrderLinesOtherPromoCost
     flowInputs:
       - fragOrderLinesOtherPromoCost
     schema:
@@ -245,7 +243,7 @@ flows:
           aggregationOperations:
             - { columnName: item_id, operation: first() }
 
-  - flowId: tempOrderLinesInventoryFlags ##fragOrderLinesInventoryFlags Merge
+  - flowId: fragOrderLinesInventoryFlags_Merge ##tempOrderLinesInventoryFlags
     flowInputs:
       - fragOrderLinesInventoryFlags
 #    schema:
@@ -260,7 +258,7 @@ flows:
           aggregationOperations:
             - { columnName: item_id, operation: first() }
 
-  - flowId: tempProductInventoryCost ##fragProductInventoryCost Merge
+  - flowId: fragProductInventoryCost_Merge ##tempProductInventoryCost
     flowInputs:
       - fragProductInventoryCost
 #    schema:
@@ -275,7 +273,7 @@ flows:
           aggregationOperations:
             - { columnName: item_id, operation: first() }
 
-  - flowId: tempProductSample ##fragProductSample Merge
+  - flowId: fragProductSample_Merge ##tempProductSample
     flowInputs:
       - fragProductSample
 #    schema:
@@ -290,7 +288,7 @@ flows:
           aggregationOperations:
             - { columnName: item_id, operation: first() }
 
-  - flowId: tempOrderLinesSample ##fragOrderLinesSamples Merge
+  - flowId: fragOrderLinesSamples_Merge ##tempOrderLinesSample
     flowInputs:
       - fragOrderLinesSamples
 #    schema:
@@ -305,7 +303,7 @@ flows:
           aggregationOperations:
             - { columnName: item_id, operation: first() }
 
-  - flowId: tempAttributeValueLkup ##fragAttributeValueLkup Merge
+  - flowId: fragAttributeValueLkup_Merge ##tempAttributeValueLkup
     flowInputs:
       - fragAttributeValueLkup
 #    schema:
@@ -320,7 +318,7 @@ flows:
           aggregationOperations:
             - { columnName: item_id, operation: first() }
 
-  - flowId: tempShippingCountryLkup ##fragShippingCountryLkup Merge
+  - flowId: fragShippingCountryLkup_Merge ##tempShippingCountryLkup
     flowInputs:
       - fragShippingCountryLkup
 #    schema:
@@ -335,7 +333,7 @@ flows:
           aggregationOperations:
             - { columnName: item_id, operation: first() }
 
-  - flowId: tempShippingOffsetLkup ##fragShippingOffsetLkup Merge
+  - flowId: fragShippingOffsetLkup_Merge ##tempShippingOffsetLkup
     flowInputs:
       - fragShippingOffsetLkup
 #    schema:
@@ -350,7 +348,7 @@ flows:
           aggregationOperations:
             - { columnName: item_id, operation: first() }
 
-  - flowId: tempOrdersRef  ##fragOrdersRef Merge
+  - flowId: fragOrdersRef_Merge  ##tempOrdersRef
     flowInputs:
       - fragOrdersRef
 #    schema:
@@ -365,7 +363,7 @@ flows:
           aggregationOperations:
             - { columnName: item_id, operation: first() }
 
-  - flowId: tempOmsProductId  ##fragOmsProductId Merge
+  - flowId: fragOmsProductId_Merge  ##tempOmsProductId
     flowInputs:
       - fragOmsProductId
 #    schema:
@@ -380,7 +378,7 @@ flows:
           aggregationOperations:
             - { columnName: item_id, operation: first() }
 
-  - flowId: tempOmsItemId  ##fragOmsItemId Merge
+  - flowId: fragOmsItemId_Merge  ##tempOmsItemId
     flowInputs:
       - fragOmsItemId
 #    schema:
@@ -395,7 +393,7 @@ flows:
           aggregationOperations:
             - { columnName: item_id, operation: first() }
 
-  - flowId: tempCurrencyConversionRates  ##fragCurrencyConversionRates Merge
+  - flowId: fragCurrencyConversionRates_Merge  ##tempCurrencyConversionRates
     flowInputs:
       - fragCurrencyConversionRates
 #    schema:
@@ -412,7 +410,7 @@ flows:
 
 ### TMaps
 
-  - flowId: fragItemProductLkup_CoreFlowJoin  ##Core Flow Item to Product Mappings tMap_5
+  - flowId: fragItemProductLkup_CoreFlowJoin_5
     flowInputs:
       - fragItemProductLkup_Merge
       - fragOrderLines
@@ -467,11 +465,10 @@ flows:
           joinOperations:
             - {columnName: product_id, operation: item_id is not null}
 
-### Flow which joins fragOrderLinesPlacedTimestamp into the main flow --tMap_2
-  - flowId: tMap_2  ##Core Flow Order Lines Placed Timestamp
+  - flowId: fragOrderLinesPlacedTimestamp_CoreFLowJoin_2
     flowInputs:
       - fragOrderLinesPlacedTimestamp_Merge
-      - fragItemProductLkup_CoreFlowJoin  #tMap_5
+      - fragItemProductLkup_CoreFlowJoin_5  #tMap_5
     schema:
       - { columnName: orderLineId, columnType: string }
       - { columnName: order_id, columnType: string }
@@ -517,14 +514,13 @@ flows:
         logic:
           joinInputs:
             - fragOrderLinesPlacedTimestamp_Merge
-            - fragItemProductLkup_CoreFlowJoin
+            - fragItemProductLkup_CoreFlowJoin_5
           joinColumns:
             - order_id
           joinOperations:
             - {columnName: placed_timestamp, operation: order_id is not null}
 
-  ### Core Flow Order Lines Shipments Item to Product Mappings  tMap_30
-  - flowId: fragOrderLinesShipments_ItemProductLookup
+  - flowId: fragOrderLinesShipments_ItemProductLkup_30
     flowInputs:
       - fragOrderLinesShipments_Merge
       - fragItemProductLkup_Merge
@@ -563,10 +559,10 @@ flows:
           joinOperations:
           - {columnName: product_id, operation: 'item_id is not null'}
 
-  - flowId: fragOrderLinesShipments_CoreFlowJoin  ##Core Flow Order Lines Shipment Information tMap_7
+  - flowId: fragOrderLinesShipments_CoreFlowJoin_7
     flowInputs:
-      - tMap_2
-      - fragOrderLinesShipments_ItemProductLookup  #tMap_30
+      - fragOrderLinesPlacedTimestamp_CoreFLowJoin_2
+      - fragOrderLinesShipments_ItemProductLkup_30
 #    schema:
 #      - { columnName: order_id, columnType: string }
 #      - { columnName: order_id, columnType: string }
@@ -581,7 +577,7 @@ flows:
           joinOperations:
             - { columnName: item_id, operation: orderLineId is not null}
 
-  - flowId: tMap_32  ##Core Flow Order Lines Order Id Sales Item to Product Mappings
+  - flowId: fragShippingCost_ItemProductLkup_32
     flowInputs:
       - tempOrderIdSales
       - fragItemProductLkup_Merge
@@ -599,13 +595,13 @@ flows:
           joinOperations:
             - { columnName: item_id, operation: orderLineId is not null}
 
-  - flowId: tMap_16  ##Core Flow Order Lines for shipment and order data translations
+  - flowId: fragShippingCost_CoreFlowJoin_16  ##Core Flow Order Lines for shipment and order data translations
     flowInputs:
-      - fragOrderLinesShipments_CoreFlowJoin
-      - tMap_32
+      - fragOrderLinesShipments_CoreFlowJoin_7
+      - fragShippingCost_ItemProductLkup_32
       - tempOrderSales
       - fragBusinessCalendar_Merge
-      - tempShippingCost
+      - fragShippingCost_Merge
 #    schema:
 #      - { columnName: order_id, columnType: string }
 #      - { columnName: order_id, columnType: string }
@@ -620,10 +616,10 @@ flows:
           joinOperations:
             - { columnName: item_id, operation: orderLineId is not null}
 
-  - flowId: tMap_33  ##Core Flow Order Lines Promos Item to Product Mappings
+  - flowId: fragOrderLinesPromos_ItemProductLkup_33
     flowInputs:
       - fragItemProductLkup_Merge
-      - tempOrderLinesPromos
+      - fragOrderLinesPromos_Merge
 #    schema:
 #      - { columnName: order_id, columnType: string }
 #      - { columnName: order_id, columnType: string }
@@ -638,11 +634,11 @@ flows:
           joinOperations:
             - { columnName: item_id, operation: orderLineId is not null}
 
-  - flowId: tMap_9  ##Core Flow Order Lines for fragOrderLinesPromos
+  - flowId: fragOrderLinesPromos_CoreFlowJoin_9
     flowInputs:
       - fragBusinessCalendar_Merge
-      - tMap_33
-      - tMap_16
+      - fragOrderLinesPromos_ItemProductLkup_33
+      - fragShippingCost_CoreFlowJoin_16
 #    schema:
 #      - { columnName: order_id, columnType: string }
 #      - { columnName: order_id, columnType: string }
@@ -657,10 +653,10 @@ flows:
           joinOperations:
             - { columnName: item_id, operation: orderLineId is not null}
 
-  - flowId: tMap_29  ##Core Flow OrderLines for fragOrderLinesItemPromos
+  - flowId: fragOrderLinesItemPromos_CoreFlowJoin_29
     flowInputs:
-      - tMap_9
-      - tempOrderLinesItemPromos
+      - fragOrderLinesPromos_CoreFlowJoin_9
+      - fragOrderLinesItemPromos_Merge
 #    schema:
 #      - { columnName: order_id, columnType: string }
 #      - { columnName: order_id, columnType: string }
@@ -675,10 +671,10 @@ flows:
           joinOperations:
             - { columnName: item_id, operation: orderLineId is not null}
 
-  - flowId: tMap_35  ##Core Flow OrderLines for fragOrderLinesInventoryFlags
+  - flowId: fragOrderLinesInventoryFlags_CoreFlowJoin_35
     flowInputs:
-      - tMap_29
-      - tempOrderLinesInventoryFlags
+      - fragOrderLinesItemPromos_CoreFlowJoin_29
+      - fragOrderLinesInventoryFlags_Merge
 #    schema:
 #      - { columnName: order_id, columnType: string }
 #      - { columnName: order_id, columnType: string }
@@ -693,12 +689,12 @@ flows:
           joinOperations:
             - { columnName: item_id, operation: orderLineId is not null}
 
-  - flowId: tMap_1  ##Core Flow OrderLines for Inventory Cost
+  - flowId: inventoryCost_productSample_CoreFlowJoin_1
     flowInputs:
-      - tMap_35
-      - tempProductInventoryCost
-      - tempProductSample
-      - tempOrderLinesSample
+      - fragOrderLinesInventoryFlags_CoreFlowJoin_35
+      - fragProductInventoryCost_Merge
+      - fragProductSample_Merge
+      - fragOrderLinesSamples_Merge
 #    schema:
 #      - { columnName: order_id, columnType: string }
 #      - { columnName: order_id, columnType: string }
@@ -713,10 +709,10 @@ flows:
           joinOperations:
             - { columnName: item_id, operation: orderLineId is not null}
 
-  - flowId: tMap_23  ##Core Flow Order Lines Other Promo Cost Item to Product Mappings
+  - flowId: fragOrderLinesOtherPromoCost_ItemProductLkup_23
     flowInputs:
       - fragItemProductLkup_Merge
-      - tempOrderLinesOtherPromoCost
+      - fragOrderLinesOtherPromoCost_Merge
 #    schema:
 #      - { columnName: order_id, columnType: string }
 #      - { columnName: order_id, columnType: string }
@@ -731,10 +727,10 @@ flows:
           joinOperations:
             - { columnName: item_id, operation: orderLineId is not null}
 
-  - flowId: tMap_4  ##Core Flow Order Lines Other Promo Cost
+  - flowId: fragOrderLinesOtherPromoCost_CoreFlowJoin_4
     flowInputs:
-      - tMap_1
-      - tMap_23
+      - inventoryCost_productSample_CoreFlowJoin_1
+      - fragOrderLinesOtherPromoCost_ItemProductLkup_23
 #    schema:
 #      - { columnName: order_id, columnType: string }
 #      - { columnName: order_id, columnType: string }
@@ -749,10 +745,10 @@ flows:
           joinOperations:
             - { columnName: item_id, operation: orderLineId is not null}
 
-  - flowId: tMap_25  ##Core Flow Order Lines Attributes
+  - flowId: fragAttributeValueLkup_CoreFlowJoin_25
     flowInputs:
-      - tMap_4
-      - tempAttributeValueLkup
+      - fragOrderLinesOtherPromoCost_CoreFlowJoin_4
+      - fragAttributeValueLkup_Merge
 #    schema:
 #      - { columnName: order_id, columnType: string }
 #      - { columnName: order_id, columnType: string }
@@ -767,10 +763,10 @@ flows:
           joinOperations:
             - { columnName: item_id, operation: orderLineId is not null}
 
-  - flowId: tMap_17  ##Core Flow Order Lines Shipping Country Lookup
+  - flowId: fragShippingCountryLkup_CoreFlowJoin_17
     flowInputs:
-      - tMap_25
-      - tempShippingCountryLkup
+      - fragAttributeValueLkup_CoreFlowJoin_25
+      - fragShippingCountryLkup_Merge
 #    schema:
 #      - { columnName: order_id, columnType: string }
 #      - { columnName: order_id, columnType: string }
@@ -785,10 +781,10 @@ flows:
           joinOperations:
             - { columnName: item_id, operation: orderLineId is not null}
 
-  - flowId: tMap_31  ##Core Flow Order Lines Attributes
+  - flowId: fragShippingOffsetLkup_CoreFlowJoin_31
     flowInputs:
-      - tMap_17
-      - tempShippingOffsetLkup
+      - fragShippingCountryLkup_CoreFlowJoin_17
+      - fragShippingOffsetLkup_Merge
 #    schema:
 #      - { columnName: order_id, columnType: string }
 #      - { columnName: order_id, columnType: string }
@@ -803,12 +799,12 @@ flows:
           joinOperations:
             - { columnName: item_id, operation: orderLineId is not null}
 
-  - flowId: tMap_3  ##Core Flow Order Lines Orders/Product/Item Lookup
+  - flowId: orders_products_item_lkup_CoreFlowJoin_3  ##Core Flow Order Lines Orders/Product/Item Lookup
     flowInputs:
-      - tMap_31
-      - tempOrdersRef
-      - tempOmsProductId
-      - tempOmsItemId
+      - fragShippingOffsetLkup_CoreFlowJoin_31
+      - fragOrdersRef_Merge
+      - fragOmsProductId_Merge
+      - fragOmsItemId_Merge
 #    schema:
 #      - { columnName: order_id, columnType: string }
 #      - { columnName: order_id, columnType: string }
@@ -823,10 +819,10 @@ flows:
           joinOperations:
             - { columnName: item_id, operation: orderLineId is not null}
 
-  - flowId: tMap_22  ##Core Flow Order Lines currency conversion
+  - flowId: fragCurrencyConversionRates_CoreFlowJoin_22
     flowInputs:
-      - tMap_3
-      - tempCurrencyConversionRates
+      - orders_products_item_lkup_CoreFlowJoin_3
+      - fragCurrencyConversionRates_Merge
 #    schema:
 #      - { columnName: order_id, columnType: string }
 #      - { columnName: order_id, columnType: string }
@@ -841,9 +837,9 @@ flows:
           joinOperations:
             - { columnName: item_id, operation: orderLineId is not null}
 
-  - flowId: tMap_14  ##Core Flow Order Lines orderLineId consolidation
+  - flowId: orderLineId_Consolidation_14
     flowInputs:
-      - tMap_22
+      - fragCurrencyConversionRates_CoreFlowJoin_22
 #    schema:
 #      - { columnName: order_id, columnType: string }
 #      - { columnName: order_id, columnType: string }
@@ -858,10 +854,9 @@ flows:
           joinOperations:
             - { columnName: item_id, operation: orderLineId is not null}
 
-  - flowId: tMap_44  ##Core Flow Order Lines Promo Translation Merge
+  - flowId: fragOrderLinesPromoTranslation_Merge_44
     flowInputs:
       - fragOrderLinesPromoTranslation
-      - tMap_14
 #    schema:
 #      - { columnName: order_id, columnType: string }
 #      - { columnName: order_id, columnType: string }
@@ -876,10 +871,10 @@ flows:
           joinOperations:
             - { columnName: item_id, operation: orderLineId is not null}
 
-  - flowId: tMap_54  ##Core Flow Order Lines Promo Translation Join
+  - flowId: fragOrderLinesPromoTranslation_CoreFlowJoin_54
     flowInputs:
-      - tMap_44
-      - tMap_14
+      - fragOrderLinesPromoTranslation_Merge_44
+      - orderLineId_Consolidation_14
 #    schema:
 #      - { columnName: order_id, columnType: string }
 #      - { columnName: order_id, columnType: string }
