@@ -251,7 +251,7 @@ module.exports = asyncHandler(async (req, res, next) => {
         flow['flowSteps'].forEach(function(flowStep) {
           switch(flowStep['type']) {
             case 'AGGREGATE':
-              flowHTML = flowHTML + '<hr><p>The flow input is grouped across the columns below applying';
+              flowHTML = flowHTML + '<hr><p>The flow input is grouped across the columns below applying ';
               flowHTML = flowHTML + 'the specified operations</p>'
               flowHTML = flowHTML + '<h6>Group By Columns:</h6>'
               flowHTML = flowHTML + '<div style="padding-top:1em;padding-left:1em;padding-bottom:1em;"><table class="table table-sm" style="font-size:12px;"><thead><tr><th>Column</th></tr></thead>'

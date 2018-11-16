@@ -74,6 +74,10 @@ typings/
 
 # FuseBox cache
 .fusebox/
+.work
+.old
+.bak
 config/test/feedOrderLinesV4.yaml.work
 config/test/feedOrderLinesV4.yaml.old
 config/test/feedOrderLinesV4.yaml.bak
+config/feedOrderLinesV4.yaml.bak
