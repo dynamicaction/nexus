@@ -268,8 +268,8 @@ fragInputs:
     description: Mapping fragment used to translate 'unit_cost'
     schema:
       - { columnName: date, columnType: date }
-      - { columnName: currencyCode, columnType: string }
-      - { columnName: conversionRate, columnType: double }
+      - { columnName: currency_code, columnType: string }
+      - { columnName: conversion_rate, columnType: double }
 
   - id: fragOrderLinesPromoTranslation
     description: Mapping fragment used to standardize or translate promo class, type, and name in fragOrderLines.promo_info to different values.  These are all standardized by splitting the promoInfo field {{class}}promo_type::promo_name=amount and matching to reference values in the fragment.
