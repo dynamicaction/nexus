@@ -180,105 +180,144 @@ flows:
         **Core Flow Merge**\n
         \n
         Data from this step determines the dayOffset used to calculate if the day in question is a day the client ships.\n"
-########################################
-### add in content below
-########################################
+
   - flowId: fragShippingCost_Merge ##tempShippingCost
     flowInputs:
       - fragShippingCost
     schema:
-      - { columnName: order_id, columnType: string }
-      - { columnName: order_id, columnType: string }
+      - { columnName: shippingPartner, columnType: string }
+      - { columnName: shipping_method, columnType: string }
+      - { columnName: deliveryCountry, columnType: string }
+      - { columnName: deliveryRegion, columnType: string }
+      - { columnName: matchType, columnType: string }
+      - { columnName: shipping_cost, columnType: double }
+      - { columnName: shippingPromiseOffset, columnType: integer }
+      - { columnName: applyType, columnType: string }
     flowSteps:
       - type: "AGGREGATE"
         logic:
           aggregationColumns:
-            - order_id
-            - orderLineId
+            - shipping_method
+            - deliveryCountry
+            - deliveryRegion
+            - matchType
           aggregationOperations:
-            - { columnName: item_id, operation: first() }
+            - { columnName: shipping_cost, operation: last() }
+            - { columnName: shippingPromiseOffset, operation: last() }
+            - { columnName: shippingPartner, operation: last() }
+            - { columnName: applyType, operation: last() }
 
   - flowId: fragOrderLinesPromos_Merge ##tempOrderLinesPromos
     flowInputs:
       - fragOrderLinesPromos
     schema:
+      - { columnName: orderLineId, columnType: string }
       - { columnName: order_id, columnType: string }
-      - { columnName: order_id, columnType: string }
+      - { columnName: item_id, columnType: string }
+      - { columnName: product_id, columnType: string }
+      - { columnName: quantity, columnType: integer }
+      - { columnName: promo_info, columnType: string }
+      - { columnName: promoAmount, columnType: double }
+      - { columnName: subtractFromSales, columnType: boolean }
     flowSteps:
       - type: "AGGREGATE"
         logic:
           aggregationColumns:
-            - order_id
             - orderLineId
+            - order_id
+            - item_id
+            - product_id
+            - quantity
           aggregationOperations:
-            - { columnName: item_id, operation: first() }
+            - { columnName: promo_info, operation: list() }
+            - { columnName: promoAmount, operation: sum() }
+            - { columnName: subtractFromSales, operation: last() }
 
   - flowId: fragOrderLinesItemPromos_Merge ##tempOrderLinesItemPromos
     flowInputs:
       - fragOrderLinesItemPromos
     schema:
       - { columnName: order_id, columnType: string }
-      - { columnName: order_id, columnType: string }
+      - { columnName: item_id, columnType: string }
+      - { columnName: promo_info, columnType: string }
+      - { columnName: subtractAmount, columnType: double }
     flowSteps:
       - type: "AGGREGATE"
         logic:
           aggregationColumns:
             - order_id
-            - orderLineId
+            - item_id
           aggregationOperations:
-            - { columnName: item_id, operation: first() }
+            - { columnName: promo_info, operation: list() }
+            - { columnName: subtractAmount, operation: sum() }
 
   - flowId: fragOrderLinesOtherPromoCost_Merge ##tempOrderLinesOtherPromoCost
     flowInputs:
       - fragOrderLinesOtherPromoCost
     schema:
+      - { columnName: orderLineId, columnType: string }
       - { columnName: order_id, columnType: string }
-      - { columnName: order_id, columnType: string }
+      - { columnName: item_id, columnType: string }
+      - { columnName: product_id, columnType: string }
+      - { columnName: quantity, columnType: integer }
+      - { columnName: other_promo_cost, columnType: double }
     flowSteps:
       - type: "AGGREGATE"
         logic:
           aggregationColumns:
-            - order_id
             - orderLineId
+            - order_id
+            - item_id
+            - product_id
+            - quantity
           aggregationOperations:
-            - { columnName: item_id, operation: first() }
+            - { columnName: other_promo_cost, operation: sum() }
 
   - flowId: fragOrderLinesInventoryFlags_Merge ##tempOrderLinesInventoryFlags
     flowInputs:
       - fragOrderLinesInventoryFlags
-#    schema:
-#      - { columnName: order_id, columnType: string }
-#      - { columnName: order_id, columnType: string }
+    schema:
+      - { columnName: item_id, columnType: string }
+      - { columnName: is_backorder, columnType: boolean }
+      - { columnName: is_preorder, columnType: boolean }
+      - { columnName: is_ship_from_vendor, columnType: boolean }
     flowSteps:
       - type: "AGGREGATE"
         logic:
           aggregationColumns:
-            - order_id
-            - orderLineId
+            - item_id
           aggregationOperations:
-            - { columnName: item_id, operation: first() }
+            - { columnName: is_backorder, operation: first() }
+            - { columnName: is_preorder, operation: first() }
+            - { columnName: is_ship_from_vendor, operation: first() }
 
   - flowId: fragProductInventoryCost_Merge ##tempProductInventoryCost
     flowInputs:
       - fragProductInventoryCost
-#    schema:
-#      - { columnName: order_id, columnType: string }
-#      - { columnName: order_id, columnType: string }
+    schema:
+      - { columnName: date, columnType: date }
+      - { columnName: product_id, columnType: string }
+      - { columnName: item_id, columnType: string }
+      - { columnName: site, columnType: string }
+      - { columnName: unit_cost, columnType: float }
     flowSteps:
       - type: "AGGREGATE"
         logic:
           aggregationColumns:
-            - order_id
-            - orderLineId
+            - date
+            - item_id
+            - site
           aggregationOperations:
-            - { columnName: item_id, operation: first() }
+            - { columnName: product_id, operation: last() }
+            - { columnName: unit_cost, operation: last() }
 
   - flowId: fragProductSample_Merge ##tempProductSample
     flowInputs:
       - fragProductSample
-#    schema:
-#      - { columnName: order_id, columnType: string }
-#      - { columnName: order_id, columnType: string }
+    schema:
+      - { columnName: item_id, columnType: string }
+      - { columnName: cost, columnType: double }
+      - { columnName: promoName, columnType: string }
     flowSteps:
       - type: "AGGREGATE"
         logic:
@@ -286,112 +325,126 @@ flows:
             - order_id
             - orderLineId
           aggregationOperations:
-            - { columnName: item_id, operation: first() }
+            - { columnName: cost, operation: last() }
+            - { columnName: promoName, operation: last() }
 
   - flowId: fragOrderLinesSamples_Merge ##tempOrderLinesSample
     flowInputs:
       - fragOrderLinesSamples
-#    schema:
-#      - { columnName: order_id, columnType: string }
-#      - { columnName: order_id, columnType: string }
+    schema:
+      - { columnName: orderLineId, columnType: string }
+      - { columnName: order_id, columnType: string }
+      - { columnName: product_id, columnType: string }
+      - { columnName: item_id, columnType: string }
+      - { columnName: cost, columnType: double }
+      - { columnName: promoType, columnType: string }
+      - { columnName: promoName, columnType: string }
+      - { columnName: isSample, columnType: boolean }
     flowSteps:
       - type: "AGGREGATE"
         logic:
           aggregationColumns:
-            - order_id
             - orderLineId
+            - order_id
+            - item_id
           aggregationOperations:
-            - { columnName: item_id, operation: first() }
+            - { columnName: cost, operation: last() }
+            - { columnName: promoType, operation: last() }
+            - { columnName: promoName, operation: last() }
+            - { columnName: isSample, operation: last() }
 
   - flowId: fragAttributeValueLkup_Merge ##tempAttributeValueLkup
     flowInputs:
       - fragAttributeValueLkup
-#    schema:
-#      - { columnName: order_id, columnType: string }
-#      - { columnName: order_id, columnType: string }
+    schema:
+      - { columnName: attributeNumber, columnType: integer }
+      - { columnName: lookup, columnType: string }
+      - { columnName: value, columnType: string }
     flowSteps:
       - type: "AGGREGATE"
         logic:
           aggregationColumns:
-            - order_id
-            - orderLineId
+            - attributeNumber
+            - lookup
           aggregationOperations:
-            - { columnName: item_id, operation: first() }
+            - { columnName: value, operation: last() }
 
   - flowId: fragShippingCountryLkup_Merge ##tempShippingCountryLkup
     flowInputs:
       - fragShippingCountryLkup
-#    schema:
-#      - { columnName: order_id, columnType: string }
-#      - { columnName: order_id, columnType: string }
+    schema:
+      - { columnName: shipping_country, columnType: string }
+      - { columnName: shippingCountryLkup, columnType: string }
     flowSteps:
       - type: "AGGREGATE"
         logic:
           aggregationColumns:
-            - order_id
-            - orderLineId
+            - shipping_country
           aggregationOperations:
-            - { columnName: item_id, operation: first() }
+            - { columnName: shippingCountryLkup, operation: last() }
 
   - flowId: fragShippingOffsetLkup_Merge ##tempShippingOffsetLkup
     flowInputs:
       - fragShippingOffsetLkup
-#    schema:
-#      - { columnName: order_id, columnType: string }
-#      - { columnName: order_id, columnType: string }
+    schema:
+
+      - { columnName: shipping_country, columnType: string }
+      - { columnName: shipping_method, columnType: string }
+      - { columnName: shippingOffset, columnType: integer }
+      - { columnName: deliveryOffset, columnType: integer }
+      - { columnName: pickUpInStoreOffset, columnType: integer }
     flowSteps:
       - type: "AGGREGATE"
         logic:
           aggregationColumns:
-            - order_id
-            - orderLineId
+            - shipping_country
+            - shipping_method
           aggregationOperations:
-            - { columnName: item_id, operation: first() }
+            - { columnName: shippingOffset, operation: min() }
+            - { columnName: deliveryOffset, operation: min() }
+            - { columnName: deliveryOffset, operation: min() }
 
   - flowId: fragOrdersRef_Merge  ##tempOrdersRef
     flowInputs:
       - fragOrdersRef
-#    schema:
-#      - { columnName: order_id, columnType: string }
-#      - { columnName: order_id, columnType: string }
+    schema:
+      - { columnName: order_id, columnType: string }
+      - { columnName: web_order_id, columnType: string }
     flowSteps:
       - type: "AGGREGATE"
         logic:
           aggregationColumns:
             - order_id
-            - orderLineId
           aggregationOperations:
-            - { columnName: item_id, operation: first() }
+            - { columnName: web_order_id, operation: last() }
 
   - flowId: fragOmsProductId_Merge  ##tempOmsProductId
     flowInputs:
       - fragOmsProductId
-#    schema:
-#      - { columnName: order_id, columnType: string }
-#      - { columnName: order_id, columnType: string }
+    schema:
+      - { columnName: omsProductId, columnType: string }
+      - { columnName: product_id, columnType: string }
     flowSteps:
       - type: "AGGREGATE"
         logic:
           aggregationColumns:
-            - order_id
-            - orderLineId
+            - product_id
           aggregationOperations:
-            - { columnName: item_id, operation: first() }
+            - { columnName: product_id, operation: last() }
 
   - flowId: fragOmsItemId_Merge  ##tempOmsItemId
     flowInputs:
       - fragOmsItemId
-#    schema:
-#      - { columnName: order_id, columnType: string }
-#      - { columnName: order_id, columnType: string }
+    schema:
+      - { columnName: omsItemId, columnType: string }
+      - { columnName: item_id, columnType: string }
     flowSteps:
       - type: "AGGREGATE"
         logic:
           aggregationColumns:
-            - order_id
-            - orderLineId
+            - omsItemId
           aggregationOperations:
-            - { columnName: item_id, operation: first() }
+            - { columnName: item_id, operation: last() }
 
   - flowId: fragCurrencyConversionRates_Merge  ##tempCurrencyConversionRates
     flowInputs:
@@ -469,7 +522,7 @@ flows:
   - flowId: fragOrderLinesPlacedTS_CoreFLowJoin_2
     flowInputs:
       - fragOrderLinesPlacedTimestamp_Merge
-      - fragItemProductLkup_CoreFlowJoin_5  #tMap_5
+      - fragItemProductLkup_CoreFlowJoin_5
     schema:
       - { columnName: orderLineId, columnType: string }
       - { columnName: order_id, columnType: string }
@@ -564,37 +617,96 @@ flows:
     flowInputs:
       - fragOrderLinesPlacedTS_CoreFLowJoin_2
       - fragOrderLinesShipments_ItemProdLkup_30
-#    schema:
-#      - { columnName: order_id, columnType: string }
-#      - { columnName: order_id, columnType: string }
+    schema:
+      - { columnName: orderLineId, columnType: string }
+      - { columnName: order_id, columnType: string }
+      - { columnName: placed_timestamp, columnType: date }
+      - { columnName: item_id, columnType: string }
+      - { columnName: product_id, columnType: string }
+      - { columnName: seller, columnType: string }
+      - { columnName: quantity, columnType: integer }
+      - { columnName: currency_code, columnType: string }
+      - { columnName: sales, columnType: double }
+      - { columnName: sales_ex_tax, columnType: double }
+      - { columnName: promo_info, columnType: string }
+      - { columnName: other_promo_cost, columnType: double }
+      - { columnName: shipping_amount, columnType: double }
+      - { columnName: shipping_ex_tax, columnType: double }
+      - { columnName: shipping_cost, columnType: double }
+      - { columnName: shipping_country, columnType: string }
+      - { columnName: shipping_region, columnType: string }
+      - { columnName: shipping_postal_code, columnType: string }
+      - { columnName: shipping_method, columnType: string }
+      - { columnName: delivery_location_type, columnType: string }
+      - { columnName: shipment_promise_timestamp, columnType: date }
+      - { columnName: delivery_promise_timestamp, columnType: date }
+      - { columnName: pick_up_in_store_promise_timestamp, columnType: date }
+      - { columnName: is_free_shipping, columnType: boolean }
+      - { columnName: is_express_shipping, columnType: boolean }
+      - { columnName: pick_pack_cost, columnType: double }
+      - { columnName: is_backorder, columnType: boolean }
+      - { columnName: is_preorder, columnType: boolean }
+      - { columnName: is_ship_from_vendor, columnType: boolean }
+      - { columnName: is_free_sample, columnType: boolean }
+      - { columnName: unit_cost, columnType: float }
+      - { columnName: current_price, columnType: float }
+      - { columnName: full_price, columnType: float }
+      - { columnName: price_currency_code, columnType: string }
+      - { columnName: order_line_attribute1, columnType: string }
+      - { columnName: order_line_attribute2, columnType: string }
+      - { columnName: order_line_attribute3, columnType: string }
+      - { columnName: order_line_attribute4, columnType: string }
+      - { columnName: order_line_attribute5, columnType: string }
     flowSteps:
       - type: "JOIN"
         logic:
           joinInputs:
-            - fragX
-            - fragXX
+            - fragOrderLinesPlacedTS_CoreFLowJoin_2
+            - fragOrderLinesShipments_ItemProdLkup_30
           joinColumns:
+            - orderLineId
             - order_id
+            - item_id
+            - product_id
+            - quantity
           joinOperations:
-            - { columnName: item_id, operation: orderLineId is not null}
+            - { columnName: shipping_amount, operation: 'orderLineId, order_id, item_id, product_id, quantity is not null'}
+            - { columnName: shipping_ex_tax, operation: 'orderLineId, order_id, item_id, product_id, quantity is not null'}
+            - { columnName: shipping_cost, operation: 'orderLineId, order_id, item_id, product_id, quantity is not null'}
+            - { columnName: shipping_country, operation: 'orderLineId, order_id, item_id, product_id, quantity is not null'}
+            - { columnName: shipping_region, operation: 'orderLineId, order_id, item_id, product_id, quantity is not null'}
+            - { columnName: shipping_postal_code, operation: 'orderLineId, order_id, item_id, product_id, quantity is not null'}
+            - { columnName: shipping_method, operation: 'orderLineId, order_id, item_id, product_id, quantity is not null'}
+            - { columnName: delivery_location_type, operation: 'orderLineId, order_id, item_id, product_id, quantity is not null'}
+            - { columnName: shipment_promise_timestamp, operation: 'orderLineId, order_id, item_id, product_id, quantity is not null'}
+            - { columnName: delivery_promise_timestamp, operation: 'orderLineId, order_id, item_id, product_id, quantity is not null'}
+            - { columnName: pick_up_in_store_promise_timestamp, operation: 'orderLineId, order_id, item_id, product_id, quantity is not null'}
+            - { columnName: is_free_shipping, operation: 'orderLineId, order_id, item_id, product_id, quantity is not null'}
+            - { columnName: is_express_shipping, operation: 'orderLineId, order_id, item_id, product_id, quantity is not null'}
+            - { columnName: pick_pack_cost, operation: 'orderLineId, order_id, item_id, product_id, quantity is not null'}
 
   - flowId: fragShippingCost_ItemProductLkup_32
     flowInputs:
       - tempOrderIdSales
       - fragItemProductLkup_Merge
-#    schema:
-#      - { columnName: order_id, columnType: string }
-#      - { columnName: order_id, columnType: string }
+    schema:
+      - { columnName: orderLineId, columnType: string }
+      - { columnName: order_id, columnType: string }
+      - { columnName: item_id, columnType: string }
+      - { columnName: product_id, columnType: string }
+      - { columnName: quantity, columnType: integer }
+      - { columnName: sales, columnType: double }
+      - { columnName: count, columnType: integer }
     flowSteps:
       - type: "JOIN"
         logic:
           joinInputs:
-            - fragX
-            - fragXX
+            - tempOrderIdSales
+            - fragItemProductLkup_Merge
           joinColumns:
-            - order_id
+            - item_id
           joinOperations:
-            - { columnName: item_id, operation: orderLineId is not null}
+            - { columnName: product_id, operation: item_id is not null}
 
   - flowId: fragShippingCost_CoreFlowJoin_16  ##Core Flow Order Lines for shipment and order data translations
     flowInputs:
@@ -603,92 +715,292 @@ flows:
       - tempOrderSales
       - fragBusinessCalendar_Merge
       - fragShippingCost_Merge
-#    schema:
-#      - { columnName: order_id, columnType: string }
-#      - { columnName: order_id, columnType: string }
+    schema:
+      - { columnName: orderLineId, columnType: string }
+      - { columnName: order_id, columnType: string }
+      - { columnName: placed_timestamp, columnType: date }
+      - { columnName: item_id, columnType: string }
+      - { columnName: product_id, columnType: string }
+      - { columnName: seller, columnType: string }
+      - { columnName: quantity, columnType: integer }
+      - { columnName: currency_code, columnType: string }
+      - { columnName: sales, columnType: double }
+      - { columnName: sales_ex_tax, columnType: double }
+      - { columnName: promo_info, columnType: string }
+      - { columnName: other_promo_cost, columnType: double }
+      - { columnName: shipping_amount, columnType: double }
+      - { columnName: shipping_ex_tax, columnType: double }
+      - { columnName: shipping_cost, columnType: double }
+      - { columnName: shipping_country, columnType: string }
+      - { columnName: shipping_region, columnType: string }
+      - { columnName: shipping_postal_code, columnType: string }
+      - { columnName: shipping_method, columnType: string }
+      - { columnName: delivery_location_type, columnType: string }
+      - { columnName: shipment_promise_timestamp, columnType: date }
+      - { columnName: delivery_promise_timestamp, columnType: date }
+      - { columnName: pick_up_in_store_promise_timestamp, columnType: date }
+      - { columnName: is_free_shipping, columnType: boolean }
+      - { columnName: is_express_shipping, columnType: boolean }
+      - { columnName: pick_pack_cost, columnType: double }
+      - { columnName: is_backorder, columnType: boolean }
+      - { columnName: is_preorder, columnType: boolean }
+      - { columnName: is_ship_from_vendor, columnType: boolean }
+      - { columnName: is_free_sample, columnType: boolean }
+      - { columnName: unit_cost, columnType: float }
+      - { columnName: current_price, columnType: float }
+      - { columnName: full_price, columnType: float }
+      - { columnName: price_currency_code, columnType: string }
+      - { columnName: order_line_attribute1, columnType: string }
+      - { columnName: order_line_attribute2, columnType: string }
+      - { columnName: order_line_attribute3, columnType: string }
+      - { columnName: order_line_attribute4, columnType: string }
+      - { columnName: order_line_attribute5, columnType: string }
+      - { columnName: shipDateRef, columnType: integer }
     flowSteps:
       - type: "JOIN"
         logic:
           joinInputs:
-            - fragX
-            - fragXX
+            - fragOrderLinesShipments_CoreFlowJoin_7
+            - fragShippingCost_ItemProductLkup_32
+            - tempOrderSales
+            - fragBusinessCalendar_Merge
+            - fragShippingCost_Merge
           joinColumns:
-            - order_id
+            - orderLineId (ShippingCost)
+            - order_id (ShippingCost)
+            - item_id (ShippingCost)
+            - product_id (ShippingCost)
+            - quantity (ShippingCost)
+            - order_id (tempOrderSales)
+            - placed_timestamp (calendar)
           joinOperations:
-            - { columnName: item_id, operation: orderLineId is not null}
+            - { columnName: shipping_cost (ShippingCost), operation: shipping_method is not null}
+            - { columnName: shippingPromiseOffset (ShippingCost), operation: shipping_method is not null}
+            - { columnName: applyType (ShippingCost), operation: shipping_method is not null}
+            - { columnName: shipping_cost (ShippingCost), operation: 'shipping_country, shipping_region, shipping_method is not null'}
+            - { columnName: shippingPromiseOffset (ShippingCost), operation: 'shipping_country, shipping_region, shipping_method is not null'}
+            - { columnName: applyType (ShippingCost), operation: 'shipping_country, shipping_region, shipping_method is not null'}
+            - { columnName: shipping_cost (ShippingCost), operation: 'shipping_country, shipping_region is not null'}
+            - { columnName: shippingPromiseOffset (ShippingCost), operation: 'shipping_country, shipping_region is not null'}
+            - { columnName: applyType (ShippingCost), operation: shipping_country  shipping_region is not null}
+            - { columnName: shipping_cost (ShippingCost), operation: shipping_country is not null}
+            - { columnName: shippingPromiseOffset (ShippingCost), operation: shipping_country is not null}
+            - { columnName: applyType (ShippingCost), operation: shipping_country is not null}
+            - { columnName: shipping_cost (ShippingCost), operation: shipping_country is not null}
+            - { columnName: shippingPromiseOffset (ShippingCost), operation: shipping_country is not null}
+            - { columnName: applyType (ShippingCost), operation: shipping_country is not null}
+            - { columnName: sales (OrderIdSales), operation: 'orderLineId, order_id, item_id, product_id, quantity is not null'}
+            - { columnName: count (OrderIdSales), operation: 'orderLineId, order_id, item_id, product_id, quantity is not null'}
+            - { columnName: sales (tempOrderSales), operation: order_id is not null}
+            - { columnName: count (tempOrderSales), operation: order_id is not null}
+            - { columnName: date (calendar), operation: placed_timestamp is not null}
+            - { columnName: dayOffset (calendar), operation: placed_timestamp is not null}
 
   - flowId: fragOrderLinesPromos_ItemProductLkup_33
     flowInputs:
       - fragItemProductLkup_Merge
       - fragOrderLinesPromos_Merge
-#    schema:
-#      - { columnName: order_id, columnType: string }
-#      - { columnName: order_id, columnType: string }
+    schema:
+      - { columnName: orderLineId, columnType: string }
+      - { columnName: order_id, columnType: string }
+      - { columnName: placed_timestamp, columnType: date }
+      - { columnName: item_id, columnType: string }
+      - { columnName: product_id, columnType: string }
+      - { columnName: quantity, columnType: integer }
+      - { columnName: promo_info, columnType: string }
+      - { columnName: currency_code, columnType: string }
+      - { columnName: promoAmount, columnType: double }
+      - { columnName: subtractFromSales, columnType: boolean }
     flowSteps:
       - type: "JOIN"
         logic:
           joinInputs:
-            - fragX
-            - fragXX
+            - fragItemProductLkup_Merge
+            - fragOrderLinesPromos_Merge
           joinColumns:
-            - order_id
+            - item_id
           joinOperations:
-            - { columnName: item_id, operation: orderLineId is not null}
+            - { columnName: product_id, operation: item_id is not null}
 
   - flowId: fragOrderLinesPromos_CoreFlowJoin_9
     flowInputs:
       - fragBusinessCalendar_Merge
       - fragOrderLinesPromos_ItemProductLkup_33
       - fragShippingCost_CoreFlowJoin_16
-#    schema:
-#      - { columnName: order_id, columnType: string }
-#      - { columnName: order_id, columnType: string }
+    schema:
+      - { columnName: orderLineId, columnType: string }
+      - { columnName: order_id, columnType: string }
+      - { columnName: placed_timestamp, columnType: date }
+      - { columnName: item_id, columnType: string }
+      - { columnName: product_id, columnType: string }
+      - { columnName: seller, columnType: string }
+      - { columnName: quantity, columnType: integer }
+      - { columnName: currency_code, columnType: string }
+      - { columnName: sales, columnType: double }
+      - { columnName: sales_ex_tax, columnType: double }
+      - { columnName: promo_info, columnType: string }
+      - { columnName: other_promo_cost, columnType: double }
+      - { columnName: shipping_amount, columnType: double }
+      - { columnName: shipping_ex_tax, columnType: double }
+      - { columnName: shipping_cost, columnType: double }
+      - { columnName: shipping_country, columnType: string }
+      - { columnName: shipping_region, columnType: string }
+      - { columnName: shipping_postal_code, columnType: string }
+      - { columnName: shipping_method, columnType: string }
+      - { columnName: delivery_location_type, columnType: string }
+      - { columnName: shipment_promise_timestamp, columnType: date }
+      - { columnName: delivery_promise_timestamp, columnType: date }
+      - { columnName: pick_up_in_store_promise_timestamp, columnType: date }
+      - { columnName: is_free_shipping, columnType: boolean }
+      - { columnName: is_express_shipping, columnType: boolean }
+      - { columnName: pick_pack_cost, columnType: double }
+      - { columnName: is_backorder, columnType: boolean }
+      - { columnName: is_preorder, columnType: boolean }
+      - { columnName: is_ship_from_vendor, columnType: boolean }
+      - { columnName: is_free_sample, columnType: boolean }
+      - { columnName: unit_cost, columnType: float }
+      - { columnName: current_price, columnType: float }
+      - { columnName: full_price, columnType: float }
+      - { columnName: price_currency_code, columnType: string }
+      - { columnName: order_line_attribute1, columnType: string }
+      - { columnName: order_line_attribute2, columnType: string }
+      - { columnName: order_line_attribute3, columnType: string }
+      - { columnName: order_line_attribute4, columnType: string }
+      - { columnName: order_line_attribute5, columnType: string }
+      - { columnName: shipDateRef, columnType: integer }
     flowSteps:
       - type: "JOIN"
         logic:
           joinInputs:
-            - fragX
-            - fragXX
+            - fragBusinessCalendar_Merge
+            - fragOrderLinesPromos_ItemProductLkup_33
+            - fragShippingCost_CoreFlowJoin_16
           joinColumns:
+            - orderLineId
             - order_id
+            - item_id
+            - product_id
+            - quantity
+            - shipDateRef
           joinOperations:
-            - { columnName: item_id, operation: orderLineId is not null}
+            - { columnName: dateRef, operation: 'orderLineId, order_id, item_id, product_id, quantity is not null'}
+            - { columnName: promo_info, operation: 'orderLineId, order_id, item_id, product_id, quantity is not null'}
+            - { columnName: promoAmount, operation: 'orderLineId, order_id, item_id, product_id, quantity is not null'}
+            - { columnName: subtractFromSales, operation: shipDateRef is not null}
 
   - flowId: fragOrderLinesItemPromos_CoreFlowJoin_29
     flowInputs:
       - fragOrderLinesPromos_CoreFlowJoin_9
       - fragOrderLinesItemPromos_Merge
-#    schema:
-#      - { columnName: order_id, columnType: string }
-#      - { columnName: order_id, columnType: string }
+    schema:
+      - { columnName: orderLineId, columnType: string }
+      - { columnName: order_id, columnType: string }
+      - { columnName: placed_timestamp, columnType: date }
+      - { columnName: item_id, columnType: string }
+      - { columnName: product_id, columnType: string }
+      - { columnName: seller, columnType: string }
+      - { columnName: quantity, columnType: integer }
+      - { columnName: currency_code, columnType: string }
+      - { columnName: sales, columnType: double }
+      - { columnName: sales_ex_tax, columnType: double }
+      - { columnName: promo_info, columnType: string }
+      - { columnName: other_promo_cost, columnType: double }
+      - { columnName: shipping_amount, columnType: double }
+      - { columnName: shipping_ex_tax, columnType: double }
+      - { columnName: shipping_cost, columnType: double }
+      - { columnName: shipping_country, columnType: string }
+      - { columnName: shipping_region, columnType: string }
+      - { columnName: shipping_postal_code, columnType: string }
+      - { columnName: shipping_method, columnType: string }
+      - { columnName: delivery_location_type, columnType: string }
+      - { columnName: shipment_promise_timestamp, columnType: date }
+      - { columnName: delivery_promise_timestamp, columnType: date }
+      - { columnName: pick_up_in_store_promise_timestamp, columnType: date }
+      - { columnName: is_free_shipping, columnType: boolean }
+      - { columnName: is_express_shipping, columnType: boolean }
+      - { columnName: pick_pack_cost, columnType: double }
+      - { columnName: is_backorder, columnType: boolean }
+      - { columnName: is_preorder, columnType: boolean }
+      - { columnName: is_ship_from_vendor, columnType: boolean }
+      - { columnName: is_free_sample, columnType: boolean }
+      - { columnName: unit_cost, columnType: float }
+      - { columnName: current_price, columnType: float }
+      - { columnName: full_price, columnType: float }
+      - { columnName: price_currency_code, columnType: string }
+      - { columnName: order_line_attribute1, columnType: string }
+      - { columnName: order_line_attribute2, columnType: string }
+      - { columnName: order_line_attribute3, columnType: string }
+      - { columnName: order_line_attribute4, columnType: string }
+      - { columnName: order_line_attribute5, columnType: string }
     flowSteps:
       - type: "JOIN"
         logic:
           joinInputs:
-            - fragX
-            - fragXX
+            - fragOrderLinesPromos_CoreFlowJoin_9
+            - fragOrderLinesItemPromos_Merge
           joinColumns:
             - order_id
+            - item_id
           joinOperations:
-            - { columnName: item_id, operation: orderLineId is not null}
+            - { columnName: promo_info, operation: order_id  item_id is not null}
+            - { columnName: subtractAmount, operation: 'order_id, item_id is not null'}
 
   - flowId: fragOrderLinesInvFlags_CoreFlowJoin_35
     flowInputs:
       - fragOrderLinesItemPromos_CoreFlowJoin_29
       - fragOrderLinesInventoryFlags_Merge
-#    schema:
-#      - { columnName: order_id, columnType: string }
-#      - { columnName: order_id, columnType: string }
+    schema:
+      - { columnName: orderLineId, columnType: string }
+      - { columnName: order_id, columnType: string }
+      - { columnName: placed_timestamp, columnType: date }
+      - { columnName: item_id, columnType: string }
+      - { columnName: product_id, columnType: string }
+      - { columnName: seller, columnType: string }
+      - { columnName: quantity, columnType: integer }
+      - { columnName: currency_code, columnType: string }
+      - { columnName: sales, columnType: double }
+      - { columnName: sales_ex_tax, columnType: double }
+      - { columnName: promo_info, columnType: string }
+      - { columnName: other_promo_cost, columnType: double }
+      - { columnName: shipping_amount, columnType: double }
+      - { columnName: shipping_ex_tax, columnType: double }
+      - { columnName: shipping_cost, columnType: double }
+      - { columnName: shipping_country, columnType: string }
+      - { columnName: shipping_region, columnType: string }
+      - { columnName: shipping_postal_code, columnType: string }
+      - { columnName: shipping_method, columnType: string }
+      - { columnName: delivery_location_type, columnType: string }
+      - { columnName: shipment_promise_timestamp, columnType: date }
+      - { columnName: delivery_promise_timestamp, columnType: date }
+      - { columnName: pick_up_in_store_promise_timestamp, columnType: date }
+      - { columnName: is_free_shipping, columnType: boolean }
+      - { columnName: is_express_shipping, columnType: boolean }
+      - { columnName: pick_pack_cost, columnType: double }
+      - { columnName: is_backorder, columnType: boolean }
+      - { columnName: is_preorder, columnType: boolean }
+      - { columnName: is_ship_from_vendor, columnType: boolean }
+      - { columnName: is_free_sample, columnType: boolean }
+      - { columnName: unit_cost, columnType: float }
+      - { columnName: current_price, columnType: float }
+      - { columnName: full_price, columnType: float }
+      - { columnName: price_currency_code, columnType: string }
+      - { columnName: order_line_attribute1, columnType: string }
+      - { columnName: order_line_attribute2, columnType: string }
+      - { columnName: order_line_attribute3, columnType: string }
+      - { columnName: order_line_attribute4, columnType: string }
+      - { columnName: order_line_attribute5, columnType: string }
     flowSteps:
       - type: "JOIN"
         logic:
           joinInputs:
-            - fragX
-            - fragXX
+            - fragOrderLinesItemPromos_CoreFlowJoin_29
+            - fragOrderLinesInventoryFlags_Merge
           joinColumns:
-            - order_id
+            - item_id
           joinOperations:
-            - { columnName: item_id, operation: orderLineId is not null}
+            - { columnName: is_backorder, operation: item_id is not null }
+            - { columnName: is_preorder, operation: item_id is not null }
+            - { columnName: is_ship_from_vendor, operation: item_id is not null }
 
   - flowId: invCost_productSample_CoreFlowJoin_1
     flowInputs:
@@ -696,94 +1008,267 @@ flows:
       - fragProductInventoryCost_Merge
       - fragProductSample_Merge
       - fragOrderLinesSamples_Merge
-#    schema:
-#      - { columnName: order_id, columnType: string }
-#      - { columnName: order_id, columnType: string }
+    schema:
+      - { columnName: orderLineId, columnType: string }
+      - { columnName: order_id, columnType: string }
+      - { columnName: placed_timestamp, columnType: date }
+      - { columnName: item_id, columnType: string }
+      - { columnName: product_id, columnType: string }
+      - { columnName: seller, columnType: string }
+      - { columnName: quantity, columnType: integer }
+      - { columnName: currency_code, columnType: string }
+      - { columnName: sales, columnType: double }
+      - { columnName: sales_ex_tax, columnType: double }
+      - { columnName: promo_info, columnType: string }
+      - { columnName: other_promo_cost, columnType: double }
+      - { columnName: shipping_amount, columnType: double }
+      - { columnName: shipping_ex_tax, columnType: double }
+      - { columnName: shipping_cost, columnType: double }
+      - { columnName: shipping_country, columnType: string }
+      - { columnName: shipping_region, columnType: string }
+      - { columnName: shipping_postal_code, columnType: string }
+      - { columnName: shipping_method, columnType: string }
+      - { columnName: delivery_location_type, columnType: string }
+      - { columnName: shipment_promise_timestamp, columnType: date }
+      - { columnName: delivery_promise_timestamp, columnType: date }
+      - { columnName: pick_up_in_store_promise_timestamp, columnType: date }
+      - { columnName: is_free_shipping, columnType: boolean }
+      - { columnName: is_express_shipping, columnType: boolean }
+      - { columnName: pick_pack_cost, columnType: double }
+      - { columnName: is_backorder, columnType: boolean }
+      - { columnName: is_preorder, columnType: boolean }
+      - { columnName: is_ship_from_vendor, columnType: boolean }
+      - { columnName: is_free_sample, columnType: boolean }
+      - { columnName: unit_cost, columnType: float }
+      - { columnName: current_price, columnType: float }
+      - { columnName: full_price, columnType: float }
+      - { columnName: price_currency_code, columnType: string }
+      - { columnName: order_line_attribute1, columnType: string }
+      - { columnName: order_line_attribute2, columnType: string }
+      - { columnName: order_line_attribute3, columnType: string }
+      - { columnName: order_line_attribute4, columnType: string }
+      - { columnName: order_line_attribute5, columnType: string }
     flowSteps:
       - type: "JOIN"
         logic:
           joinInputs:
-            - fragX
-            - fragXX
+            - fragOrderLinesInvFlags_CoreFlowJoin_35
+            - fragProductInventoryCost_Merge
+            - fragProductSample_Merge
+            - fragOrderLinesSamples_Merge
           joinColumns:
-            - order_id
+            - item_id (ProductSample)
+            - item_id (ProductInventoryCost)
+            - orderLineId (OrderLinesSample)
+            - order_id (OrderLinesSample)
+            - item_id (OrderLinesSample)
           joinOperations:
-            - { columnName: item_id, operation: orderLineId is not null}
+            - { columnName: item_id (ProductSample), operation: item_id is not null}
+            - { columnName: cost (ProductSample), operation: 'item_id is not null'}
+            - { columnName: item_id (ProductInventoryCost), operation: item_id is not null}
+            - { columnName: unit_cost (ProductInventoryCost), operation: item_id is not null}
+            - { columnName: item_id (OrderLineSample), operation: 'orderLineId, product_id, item_id is not null'}
+            - { columnName: cost (OrderLineSample), operation: 'orderLineId, product_id, item_id is not null'}
+            - { columnName: promoType (OrderLineSample), operation: 'orderLineId, product_id, item_id is not null'}
+            - { columnName: promoName (OrderLineSample), operation: 'orderLineId, product_id, item_id is not null'}
+            - { columnName: isSample (OrderLineSample), operation: 'orderLineId, product_id, item_id is not null'}
 
   - flowId: fragOrdLinesOthPromoCst_ItemProdLkup_23
     flowInputs:
       - fragItemProductLkup_Merge
       - fragOrderLinesOtherPromoCost_Merge
-#    schema:
-#      - { columnName: order_id, columnType: string }
-#      - { columnName: order_id, columnType: string }
+    schema:
+      - { columnName: orderLineId, columnType: string }
+      - { columnName: order_id, columnType: string }
+      - { columnName: item_id, columnType: string }
+      - { columnName: product_id, columnType: string }
+      - { columnName: quantity, columnType: integer }
+      - { columnName: other_promo_cost, columnType: double }
     flowSteps:
       - type: "JOIN"
         logic:
           joinInputs:
-            - fragX
-            - fragXX
+            - fragItemProductLkup_Merge
+            - fragOrderLinesOtherPromoCost_Merge
           joinColumns:
-            - order_id
+            - item_id
           joinOperations:
-            - { columnName: item_id, operation: orderLineId is not null}
+            - { columnName: product_id, operation: item_id is not null}
 
   - flowId: fragOrdLinesOtherPromoCst_CoreFlowJoin_4
     flowInputs:
       - invCost_productSample_CoreFlowJoin_1
       - fragOrdLinesOthPromoCst_ItemProdLkup_23
-#    schema:
-#      - { columnName: order_id, columnType: string }
-#      - { columnName: order_id, columnType: string }
+    schema:
+      - { columnName: order_id, columnType: string }
+      - { columnName: placed_timestamp, columnType: date }
+      - { columnName: item_id, columnType: string }
+      - { columnName: product_id, columnType: string }
+      - { columnName: seller, columnType: string }
+      - { columnName: quantity, columnType: integer }
+      - { columnName: currency_code, columnType: string }
+      - { columnName: sales, columnType: double }
+      - { columnName: sales_ex_tax, columnType: double }
+      - { columnName: promo_info, columnType: string }
+      - { columnName: other_promo_cost, columnType: double }
+      - { columnName: shipping_amount, columnType: double }
+      - { columnName: shipping_ex_tax, columnType: double }
+      - { columnName: shipping_cost, columnType: double }
+      - { columnName: shipping_country, columnType: string }
+      - { columnName: shipping_region, columnType: string }
+      - { columnName: shipping_postal_code, columnType: string }
+      - { columnName: shipping_method, columnType: string }
+      - { columnName: delivery_location_type, columnType: string }
+      - { columnName: shipment_promise_timestamp, columnType: date }
+      - { columnName: delivery_promise_timestamp, columnType: date }
+      - { columnName: pick_up_in_store_promise_timestamp, columnType: date }
+      - { columnName: is_free_shipping, columnType: boolean }
+      - { columnName: is_express_shipping, columnType: boolean }
+      - { columnName: pick_pack_cost, columnType: double }
+      - { columnName: is_backorder, columnType: boolean }
+      - { columnName: is_preorder, columnType: boolean }
+      - { columnName: is_ship_from_vendor, columnType: boolean }
+      - { columnName: is_free_sample, columnType: boolean }
+      - { columnName: unit_cost, columnType: float }
+      - { columnName: current_price, columnType: float }
+      - { columnName: full_price, columnType: float }
+      - { columnName: price_currency_code, columnType: string }
+      - { columnName: order_line_attribute1, columnType: string }
+      - { columnName: order_line_attribute2, columnType: string }
+      - { columnName: order_line_attribute3, columnType: string }
+      - { columnName: order_line_attribute4, columnType: string }
+      - { columnName: order_line_attribute5, columnType: string }
     flowSteps:
       - type: "JOIN"
         logic:
           joinInputs:
-            - fragX
-            - fragXX
+            - invCost_productSample_CoreFlowJoin_1
+            - fragOrdLinesOthPromoCst_ItemProdLkup_23
           joinColumns:
+            - orderLineId
             - order_id
+            - item_id
+            - product_id
+            - quantity
           joinOperations:
-            - { columnName: item_id, operation: orderLineId is not null}
+            - { columnName: other_promo_cost, operation: 'orderLineId, order_id, item_id, product_id, quantity is not null'}
 
   - flowId: fragAttributeValueLkup_CoreFlowJoin_25
     flowInputs:
       - fragOrdLinesOtherPromoCst_CoreFlowJoin_4
       - fragAttributeValueLkup_Merge
-#    schema:
-#      - { columnName: order_id, columnType: string }
-#      - { columnName: order_id, columnType: string }
+    schema:
+      - { columnName: order_id, columnType: string }
+      - { columnName: placed_timestamp, columnType: date }
+      - { columnName: item_id, columnType: string }
+      - { columnName: product_id, columnType: string }
+      - { columnName: seller, columnType: string }
+      - { columnName: quantity, columnType: integer }
+      - { columnName: currency_code, columnType: string }
+      - { columnName: sales, columnType: double }
+      - { columnName: sales_ex_tax, columnType: double }
+      - { columnName: promo_info, columnType: string }
+      - { columnName: other_promo_cost, columnType: double }
+      - { columnName: shipping_amount, columnType: double }
+      - { columnName: shipping_ex_tax, columnType: double }
+      - { columnName: shipping_cost, columnType: double }
+      - { columnName: shipping_country, columnType: string }
+      - { columnName: shipping_region, columnType: string }
+      - { columnName: shipping_postal_code, columnType: string }
+      - { columnName: shipping_method, columnType: string }
+      - { columnName: delivery_location_type, columnType: string }
+      - { columnName: shipment_promise_timestamp, columnType: date }
+      - { columnName: delivery_promise_timestamp, columnType: date }
+      - { columnName: pick_up_in_store_promise_timestamp, columnType: date }
+      - { columnName: is_free_shipping, columnType: boolean }
+      - { columnName: is_express_shipping, columnType: boolean }
+      - { columnName: pick_pack_cost, columnType: double }
+      - { columnName: is_backorder, columnType: boolean }
+      - { columnName: is_preorder, columnType: boolean }
+      - { columnName: is_ship_from_vendor, columnType: boolean }
+      - { columnName: is_free_sample, columnType: boolean }
+      - { columnName: unit_cost, columnType: float }
+      - { columnName: current_price, columnType: float }
+      - { columnName: full_price, columnType: float }
+      - { columnName: price_currency_code, columnType: string }
+      - { columnName: order_line_attribute1, columnType: string }
+      - { columnName: order_line_attribute2, columnType: string }
+      - { columnName: order_line_attribute3, columnType: string }
+      - { columnName: order_line_attribute4, columnType: string }
+      - { columnName: order_line_attribute5, columnType: string }
     flowSteps:
       - type: "JOIN"
         logic:
           joinInputs:
-            - fragX
-            - fragXX
+            - fragOrdLinesOtherPromoCst_CoreFlowJoin_4
+            - fragAttributeValueLkup_Merge
           joinColumns:
-            - order_id
+            - order_line_attribute1
+            - order_line_attribute2
+            - order_line_attribute3
+            - order_line_attribute4
+            - order_line_attribute5
           joinOperations:
-            - { columnName: item_id, operation: orderLineId is not null}
+            - { columnName: value, operation: order_line_attribute1 is not null}
+            - { columnName: value, operation: order_line_attribute2 is not null}
+            - { columnName: value, operation: order_line_attribute3 is not null}
+            - { columnName: value, operation: order_line_attribute4 is not null}
+            - { columnName: value, operation: order_line_attribute5 is not null}
 
   - flowId: fragShippingCountryLkup_CoreFlowJoin_17
     flowInputs:
       - fragAttributeValueLkup_CoreFlowJoin_25
       - fragShippingCountryLkup_Merge
-#    schema:
-#      - { columnName: order_id, columnType: string }
-#      - { columnName: order_id, columnType: string }
+    schema:
+      - { columnName: order_id, columnType: string }
+      - { columnName: placed_timestamp, columnType: date }
+      - { columnName: item_id, columnType: string }
+      - { columnName: product_id, columnType: string }
+      - { columnName: seller, columnType: string }
+      - { columnName: quantity, columnType: integer }
+      - { columnName: currency_code, columnType: string }
+      - { columnName: sales, columnType: double }
+      - { columnName: sales_ex_tax, columnType: double }
+      - { columnName: promo_info, columnType: string }
+      - { columnName: other_promo_cost, columnType: double }
+      - { columnName: shipping_amount, columnType: double }
+      - { columnName: shipping_ex_tax, columnType: double }
+      - { columnName: shipping_cost, columnType: double }
+      - { columnName: shipping_country, columnType: string }
+      - { columnName: shipping_region, columnType: string }
+      - { columnName: shipping_postal_code, columnType: string }
+      - { columnName: shipping_method, columnType: string }
+      - { columnName: delivery_location_type, columnType: string }
+      - { columnName: shipment_promise_timestamp, columnType: date }
+      - { columnName: delivery_promise_timestamp, columnType: date }
+      - { columnName: pick_up_in_store_promise_timestamp, columnType: date }
+      - { columnName: is_free_shipping, columnType: boolean }
+      - { columnName: is_express_shipping, columnType: boolean }
+      - { columnName: pick_pack_cost, columnType: double }
+      - { columnName: is_backorder, columnType: boolean }
+      - { columnName: is_preorder, columnType: boolean }
+      - { columnName: is_ship_from_vendor, columnType: boolean }
+      - { columnName: is_free_sample, columnType: boolean }
+      - { columnName: unit_cost, columnType: float }
+      - { columnName: current_price, columnType: float }
+      - { columnName: full_price, columnType: float }
+      - { columnName: price_currency_code, columnType: string }
+      - { columnName: order_line_attribute1, columnType: string }
+      - { columnName: order_line_attribute2, columnType: string }
+      - { columnName: order_line_attribute3, columnType: string }
+      - { columnName: order_line_attribute4, columnType: string }
+      - { columnName: order_line_attribute5, columnType: string }
     flowSteps:
       - type: "JOIN"
         logic:
           joinInputs:
-            - fragX
-            - fragXX
+            - fragShippingCountryLkup_Merge
+            - fragAttributeValueLkup_CoreFlowJoin_25
           joinColumns:
-            - order_id
+            - shipping_country
           joinOperations:
-            - { columnName: item_id, operation: orderLineId is not null}
-##-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*
-##-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*
-##-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*
+            - { columnName: shippingCountryLkup, operation: shipping_country is not null}
+
   - flowId: fragShippingOffsetLkup_CoreFlowJoin_31
     flowInputs:
       - fragShippingCountryLkup_CoreFlowJoin_17
@@ -837,9 +1322,9 @@ flows:
             - shipping_country
             - shipping_method
           joinOperations:
-            - { columnName: shippingOffset, operation: shippingOffset is not null}
-            - { columnName: deliveryOffset, operation: deliveryOffset is not null}
-            - { columnName: pickupInStoreOffset, operation: pickupInStoreOffset is not null}
+            - { columnName: shippingOffset, operation: 'shipping_country, shipping_method is not null'}
+            - { columnName: deliveryOffset, operation: 'shipping_country, shipping_method is not null'}
+            - { columnName: pickupInStoreOffset, operation: 'shipping_country, shipping_method is not null'}
 
   - flowId: order_product_item_lkup_CoreFlowJoin_3  ##Core Flow Order Lines Orders/Product/Item Lookup
     flowInputs:
@@ -900,8 +1385,8 @@ flows:
             - item_id --> oms_item_id
           joinOperations:
             - { columnName: web_order_id, operation: order_id is not null}
-            - { columnName: oms_product_id, operation: product_id is not null}
-            - { columnName: oms_item_id, operation: item_id is not null}
+            - { columnName: product_id, operation: oms_product_id is not null}
+            - { columnName: item_id, operation: oms_item_id is not null}
 
   - flowId: fragCurrencyConvRate_CoreFlowJoin_22
     flowInputs:
@@ -956,7 +1441,7 @@ flows:
           joinColumns:
             - currency_code
           joinOperations:
-            - { columnName: conversion_rate, operation: conversion_rate is not null}
+            - { columnName: conversion_rate, operation: currency_code is not null}
 
   - flowId: orderLineId_Consolidation_14
     flowInputs:
@@ -1077,9 +1562,9 @@ flows:
             - typeIn
             - nameIn
           joinOperations:
-            - { columnName: classOut, operation: classOut is not null}
-            - { columnName: typeOut, operation: typeOut is not null}
-            - { columnName: nameOut, operation: nameOut is not null}
+            - { columnName: classOut, operation: classIn is not null}
+            - { columnName: typeOut, operation: typeIn is not null}
+            - { columnName: nameOut, operation: nameIn is not null}
 
   - flowId: fragOrdLinesPromoTrans_CoreFlowJoin_54
     flowInputs:

@@ -70,4 +70,4 @@ feedOutputs:
       - { columnName: order_line_attribute2, columnType: string }
       - { columnName: order_line_attribute3, columnType: string }
       - { columnName: order_line_attribute4, columnType: string }
-      - { columnName: order_line_attribute5, columnType: string  }
+      - { columnName: order_line_attribute5, columnType: string }
