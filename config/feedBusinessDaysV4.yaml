@@ -1,0 +1,26 @@
+---
+feedJobName: feedBusinessDaysV4
+feedOutput: feedBusinessDays
+flows:
+  - flowId: feedBusinessDays_Merge
+    flowInputs:
+      - fragBusinessDays
+    schema:
+      - { columnName: date, columnType: date }
+      - { columnName: is_non_business_day, columnType: boolean }
+    flowSteps:
+      - type: "AGGREGATE"
+        logic: 
+          aggregationColumns:
+            - date
+          aggregationOperations:
+            - { columnName: is_non_business_day, operation: last() }
+
+  - flowId: feedBusinessDays_Dummy
+    flowInputs:
+      - feedBusinessDays_Merge
+    flowSteps:
+      - type: MARKDOWN
+        logic: "\n
+        dummy flow to keep validation happy, remove once that is fixed.\n"
+

@@ -303,15 +303,15 @@ fragInputs:
       - { columnName: segmentId, columnType: string }
       - { columnName: value, columnType: string}
 
-##  - id: fragDataAnalyticsImport
-##    description: "Fragment for loading historical metrics or prior period data."
-##    schema:
-##      - { columnName: startDate, columnType: date }
-##      - { columnName: endDate, columnType: date }
-##      - { columnName: metric_id, columnType: string }
-##      - { columnName: metric_value, columnType: double }
-##      - { columnName: dimensionList, columnType: string }
-##      - { columnName: dimensionValues, columnType: string }
+  - id: fragDataAnalyticsImport
+    description: "Fragment for loading historical metrics or prior period data."
+    schema:
+      - { columnName: startDate, columnType: date }
+      - { columnName: endDate, columnType: date }
+      - { columnName: metricId, columnType: string }
+      - { columnName: metricValue, columnType: double }
+      - { columnName: dimensionList, columnType: string }
+      - { columnName: dimensionValues, columnType: string }
 
   - id: fragCalendar
     description: "Fragment with calendar information for the client's financial periods."
@@ -323,23 +323,23 @@ fragInputs:
       - { columnName: endDate, columnType: date }
       - { columnName: yearLabel, columnType: string }
 
-##  - id: fragBusinessDays
-##    description: "Mapping fragment for the client business day lookups for shipping information."
-##    schema:
-##      - { columnName: date, columnType: date }
-##      - { columnName: is_non_business_day, columnType: boolean }
-##
-##  - id: fragTrademarkTerms
-##    description: "Mapping fragment for search terms."
-##    schema:
-##      - { columnName: search_string, columnType: string }
-##      - { columnName: longerThan3, columnType: string }
-##
-##
-##  - id: fragCurrencyConversionRates
-##    description: "Fragment for currency conversion rates."
-##    schema:
-##      - { columnName: date, columnType: date }
-##      - { columnName: currency_code, columnType: string }
-##      - { columnName: conversion_rate, columnType: double }
+  - id: fragBusinessDays
+    description: "Mapping fragment for the client business day lookups for shipping information."
+    schema:
+      - { columnName: date, columnType: date }
+      - { columnName: is_non_business_day, columnType: boolean }
+
+  - id: fragTrademarkTerms
+    description: "Mapping fragment for search terms."
+    schema:
+      - { columnName: search_string, columnType: string }
+      - { columnName: longerThan3, columnType: string }
+
+
+  - id: fragCurrencyConversionRates
+    description: "Fragment for currency conversion rates."
+    schema:
+      - { columnName: date, columnType: date }
+      - { columnName: currency_code, columnType: string }
+      - { columnName: conversion_rate, columnType: double }
 

@@ -1,0 +1,28 @@
+---
+feedJobName: feedCurrencyConversionRatesV4
+feedOutput: feedCurrencyConversionRates
+flows:
+  - flowId: feedCurrencyConversionRates_Merge
+    flowInputs:
+      - fragCurrencyConversionRates
+    schema:
+      - { columnName: date, columnType: date }
+      - { columnName: currency_code, columnType: string }
+      - { columnName: conversion_rate, columnType: double }
+    flowSteps:
+      - type: "AGGREGATE"
+        logic: 
+          aggregationColumns:
+            - date
+            - currency_code
+          aggregationOperations:
+            - { columnName: conversion_rate, operation: last() }
+
+  - flowId: feedCurrencyConversionRates_Dummy
+    flowInputs:
+      - feedCurrencyConversionRates_Merge
+    flowSteps:
+      - type: MARKDOWN
+        logic: "\n
+        dummy flow to keep validation happy, remove once that is fixed.\n"
+

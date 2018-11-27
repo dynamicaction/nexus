@@ -1,5 +1,43 @@
 ---
 feedOutputs:
+
+  - id: feedBusinessDays
+    jobName: feedBusinessDaysV4
+    description: "This feed contains the client business day lookups for shipping the calendar information for the client's financial periods."
+    schema:
+      - { columnName: date, columnType: date }
+      - { columnName: is_non_business_day, columnType: boolean }
+
+  - id: feedCalendar
+    jobName: feedCalendarV4
+    description: "This feed has the calendar information for the client's financial periods.  This is a direct load feed that does not go into DPS."
+    schema:
+      - { columnName: year, columnType: integer }
+      - { columnName: quarter, columnType: integer }
+      - { columnName: monthName, columnType: string }
+      - { columnName: startDate, columnType: date }
+      - { columnName: endDate, columnType: date }
+      - { columnName: yearLabel, columnType: string }
+
+  - id: feedCurrencyConversionRates
+    jobName: feedCurrencyConversionRatesV4
+    description: "This feed contains the client currency conversion rate lookups."
+    schema:
+      - { columnName: date, columnType: date }
+      - { columnName: currency_code, columnType: string }
+      - { columnName: conversion_rate, columnType: double }
+
+  - id: feedDataAnalyticsImport
+    jobName: feedDataAnalyticsImportV4
+    description: "This feed is for loading historical metrics or prior period data.  This is a direct load feed that does not go into DPS."
+    schema:
+      - { columnName: startDate, columnType: date }
+      - { columnName: endDate, columnType: date }
+      - { columnName: metricId, columnType: string }
+      - { columnName: metricValue, columnType: double }
+      - { columnName: dimensionList, columnType: string }
+      - { columnName: dimensionValues, columnType: string }
+
   - id: feedItemAttributes
     jobName: feedItemAttributesV4
     description: "This feed contains the mapping of item attributes and their values to individual item ids."
@@ -7,27 +45,6 @@ feedOutputs:
       - { columnName: item_id, columnType: string }
       - { columnName: idx, columnType: integer }
       - { columnName: value, columnType: string }
-
-  - id: feedReturns
-    jobName: feedReturnsV4
-    description: "This feed contains all returns processed for a given day"
-    schema:
-      - { columnName: order_id, columnType: string }
-      - { columnName: item_id, columnType: string }
-      - { columnName: product_id, columnType: string }
-      - { columnName: seller, columnType: string }
-      - { columnName: quantity, columnType: integer }
-      - { columnName: return_timestamp, columnType: string }
-      - { columnName: channel, columnType: string }
-      - { columnName: site_cat1, columnType: string }
-      - { columnName: site_cat2, columnType: string }
-      - { columnName: return_reason_internal, columnType: string }
-      - { columnName: return_reason_display, columnType: string }
-      - { columnName: returned_to_stock, columnType: string }
-      - { columnName: refund_amount, columnType: double }
-      - { columnName: currency_code, columnType: string }
-      - { columnName: return_shipping_cost, columnType: double }
-      - { columnName: returned_to_store, columnType: string }
 
   - id: feedOrderLines
     jobName: feedOrderLinesV4
@@ -72,49 +89,35 @@ feedOutputs:
       - { columnName: order_line_attribute4, columnType: string }
       - { columnName: order_line_attribute5, columnType: string }
 
-##  - id: feedDataAnalyticsImport
-##    jobName: feedDataAnalyticsImportV4
-##    description: "This feed is for loading historical metrics or prior period data."
-##    schema:
-##      - { columnName: startDate, columnType: date }
-##      - { columnName: endDate, columnType: date }
-##      - { columnName: metric_id, columnType: string }
-##      - { columnName: metric_value, columnType: double }
-##      - { columnName: dimensionList, columnType: string }
-##      - { columnName: dimensionValues, columnType: string }
-
-  - id: feedCalendar
-    jobName: feedCalendarV4
-    description: "This feed has the calendar information for the client's financial periods."
+  - id: feedReturns
+    jobName: feedReturnsV4
+    description: "This feed contains all returns processed for a given day"
     schema:
-      - { columnName: year, columnType: integer }
-      - { columnName: quarter, columnType: integer }
-      - { columnName: monthName, columnType: string }
-      - { columnName: startDate, columnType: date }
-      - { columnName: endDate, columnType: date }
-      - { columnName: yearLabel, columnType: string }
+      - { columnName: order_id, columnType: string }
+      - { columnName: item_id, columnType: string }
+      - { columnName: product_id, columnType: string }
+      - { columnName: seller, columnType: string }
+      - { columnName: quantity, columnType: integer }
+      - { columnName: return_timestamp, columnType: string }
+      - { columnName: channel, columnType: string }
+      - { columnName: site_cat1, columnType: string }
+      - { columnName: site_cat2, columnType: string }
+      - { columnName: return_reason_internal, columnType: string }
+      - { columnName: return_reason_display, columnType: string }
+      - { columnName: returned_to_stock, columnType: string }
+      - { columnName: refund_amount, columnType: double }
+      - { columnName: currency_code, columnType: string }
+      - { columnName: return_shipping_cost, columnType: double }
+      - { columnName: returned_to_store, columnType: string }
 
-##  - id: feedBusinessDays
-##    jobName: feedBusinessDaysV4
-##    description: "This feed contains the client business day lookups for shipping the calendar information for the client's financial periods."
-##    schema:
-##      - { columnName: date, columnType: date }
-##      - { columnName: is_non_business_day, columnType: boolean }
-##
-##  - id: feedTrademarkTerms
-##    jobName: feedTrademarkTermsV4
-##    description: "This feed contains the client business day lookups for shipping the calendar information for the client's financial periods."
-##    schema:
-##      - { columnName: search_string, columnType: string }
-##      - { columnName: longerThan3, columnType: string }
-##
-##
-##  - id: feedCurrencyConversionRates
-##    jobName: feedCurrencyConversionRatesV4
-##    description: "This feed contains the client business day lookups for shipping the calendar information for the client's financial periods."
-##    schema:
-##      - { columnName: date, columnType: date }
-##      - { columnName: currency_code, columnType: string }
-##      - { columnName: conversion_rate, columnType: double }
+
+
+  - id: feedTrademarkTerms
+    jobName: feedTrademarkTermsV4
+    description: "This feed contains the client's commonly used search terms."
+    schema:
+      - { columnName: trademarkTerm, columnType: string }
+      - { columnName: longerThan3, columnType: string }
+
 
 

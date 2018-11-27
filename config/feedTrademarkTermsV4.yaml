@@ -1,0 +1,31 @@
+---
+feedJobName: feedTrademarkTermsV4
+feedOutput: feedTrademarkTerms
+flows:
+  - flowId: feedTrademarkTerms_Merge
+    flowInputs:
+      - fragTrademarkTerms
+    schema:
+      - { columnName: trademarkTerm, columnType: string }
+      - { columnName: longerThan3, columnType: string }
+    flowSteps:
+      - type: MARKDOWN
+        logic: "\n
+        **fragTrademarkTerms schema**\n
+        \n
+        - trademarkTerm\n
+        \n
+        -----
+        \n
+        **Core Flow Merge**\n
+        \n
+        All trademarkTerm fragments are combined here and deduped.\n"
+
+  - flowId: feedTrademarkTerms_Dummy
+    flowInputs:
+      - feedTrademarkTerms_Merge
+    flowSteps:
+      - type: MARKDOWN
+        logic: "\n
+        dummy flow to keep validation happy, remove once that is fixed.\n"
+

@@ -1,0 +1,34 @@
+---
+feedJobName: feedDataAnalyticsImportV4
+feedOutput: feedDataAnalyticsImport
+flows:
+  - flowId: feedDataAnalyticsImport_Merge
+    flowInputs:
+      - fragDataAnalyticsImport
+    schema:
+      - { columnName: startDate, columnType: date }
+      - { columnName: endDate, columnType: date }
+      - { columnName: metricId, columnType: string }
+      - { columnName: metricValue, columnType: double }
+      - { columnName: dimensionList, columnType: string }
+      - { columnName: dimensionValues, columnType: string }
+    flowSteps:
+      - type: "AGGREGATE"
+        logic: 
+          aggregationColumns:
+            - startDate
+            - endDate
+            - metricId
+            - dimensionList
+            - dimensionValues
+          aggregationOperations:
+            - { columnName: metricId, operation: sum() }
+
+  - flowId: feedDataAnalyticsImport_Dummy
+    flowInputs:
+      - feedDataAnalyticsImport_Merge
+    flowSteps:
+      - type: MARKDOWN
+        logic: "\n
+        dummy flow to keep validation happy, remove once that is fixed.\n"
+
