@@ -4,9 +4,9 @@ feedOutput: feedReturns
 sankeyWidth: 1200
 flows:
 
-  - flowId: fragReturnReasons_Merge
+  - flowId: fragReturnsReasons_Merge
     flowInputs:
-      - fragReturnReasons
+      - fragReturnsReasons
     schema:
       - { columnName: orderLineId, columnType: integer }
       - { columnName: order_id, columnType: string }
@@ -146,10 +146,10 @@ flows:
             - { columnName: item_id, operation: orderLineId is not null}
   
 
-  - flowId: fragReturnReasons_CoreFlowJoin
+  - flowId: fragReturnsReasons_CoreFlowJoin
     flowInputs:
       - fragOrderLineItemLkup_Merge
-      - fragReturnReasons_Merge
+      - fragReturnsReasons_Merge
       - fragOrderLineItemLkup_CoreFlowJoin
     schema:
       - { columnName: orderLineId, columnType: string }
@@ -174,7 +174,7 @@ flows:
         logic: "\n
         **OrderLineId Item Map**\n
         \n
-        Since the fragment fragReturnReasons has item_id in it, the flow first joins together `fragOrderLineItemLkup_Merge` and `fragReturnReasons_Merge` using `orderLineId` and `orderId` and setting the `item_id` where joined producing the output of columns.\n
+        Since the fragment fragReturnsReasons has item_id in it, the flow first joins together `fragOrderLineItemLkup_Merge` and `fragReturnsReasons_Merge` using `orderLineId` and `orderId` and setting the `item_id` where joined producing the output of columns.\n
         \n
         - orderLineId\n
         - order_id\n
@@ -189,9 +189,9 @@ flows:
       - type: HTML
         logic: "<p>This was only done this way to show Markdown and HTML Functionality.</p>"
 
-  - flowId: fragReturnReasonsLkup_CoreFlowJoin
+  - flowId: fragReturnsReasonsLkup_CoreFlowJoin
     flowInputs:
-      - fragReturnReasons_CoreFlowJoin
+      - fragReturnsReasons_CoreFlowJoin
       - fragReturnsReasonsLkup_Merge
     schema:
       - { columnName: orderLineId, columnType: string }
@@ -215,7 +215,7 @@ flows:
       - type: "JOIN"
         logic: 
           joinInputs:
-            - fragReturnReasons_CoreFlowJoin
+            - fragReturnsReasons_CoreFlowJoin
             - fragReturnsReasonsLkup_Merge
           joinColumns:
             - reason
@@ -224,7 +224,7 @@ flows:
 
   - flowId: fragItemProductLkup_CoreFlowJoin
     flowInputs:
-      - fragReturnReasonsLkup_CoreFlowJoin
+      - fragReturnsReasonsLkup_CoreFlowJoin
       - fragItemProductLkup_Merge
     schema:
       - { columnName: orderLineId, columnType: string }
@@ -248,7 +248,7 @@ flows:
       - type: "JOIN"
         logic: 
           joinInputs:
-            - fragReturnReasonsLkup_CoreFlowJoin
+            - fragReturnsReasonsLkup_CoreFlowJoin
             - fragItemProductLkup_Merge
           joinColumns:
             - item_id

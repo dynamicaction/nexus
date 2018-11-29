@@ -66,7 +66,7 @@ fragInputs:
       - { columnName: return_shipping_cost, columnType: double }
       - { columnName: returned_to_store, columnType: string }
 
-  - id: fragReturnReasons
+  - id: fragReturnsReasons
     description: Mapping fragment that will set the return reason filed based on 'order_id' and 'item_id'
     schema:
       - { columnName: orderLineId, columnType: integer }
