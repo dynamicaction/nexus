@@ -264,13 +264,6 @@ fragInputs:
       - { columnName: order_id, columnType: string }
       - { columnName: webOrderId, columnType: string }
 
-  - id: fragCurrencyConversionRates
-    description: Mapping fragment used to translate 'unit_cost'
-    schema:
-      - { columnName: date, columnType: date }
-      - { columnName: currency_code, columnType: string }
-      - { columnName: conversion_rate, columnType: double }
-
   - id: fragOrderLinesPromoTranslation
     description: Mapping fragment used to standardize or translate promo class, type, and name in fragOrderLines.promo_info to different values.  These are all standardized by splitting the promoInfo field {{class}}promo_type::promo_name=amount and matching to reference values in the fragment.
     schema:
@@ -323,7 +316,7 @@ fragInputs:
       - { columnName: endDate, columnType: date }
       - { columnName: yearLabel, columnType: string }
 
-  - id: fragBusinessDays
+  - id: fragBusinessDays  #not in standard.yaml
     description: "Mapping fragment for the client business day lookups for shipping information."
     schema:
       - { columnName: date, columnType: date }
