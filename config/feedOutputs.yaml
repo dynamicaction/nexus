@@ -1,12 +1,12 @@
 ---
 feedOutputs:
 
-  - id: feedBusinessDays
-    jobName: feedBusinessDaysV4
-    description: "This feed contains the client business day lookups for shipping the calendar information for the client's financial periods."
-    schema:
-      - { columnName: date, columnType: date }
-      - { columnName: is_non_business_day, columnType: boolean }
+##  - id: feedBusinessDays
+##    jobName: feedBusinessDaysV4
+##    description: "This feed contains the client business day lookups for shipping the calendar information for the client's financial periods."
+##    schema:
+##      - { columnName: date, columnType: date }
+##      - { columnName: is_non_business_day, columnType: boolean }
 
   - id: feedCalendar
     jobName: feedCalendarV4

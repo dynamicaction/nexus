@@ -2,7 +2,7 @@
 fragInputs:
   - id: fragOrderLines
     isCore: true
-    description: This is core fragment for feedOrderLines.
+    description: This is the core fragment for feedOrderLines.
     schema:
       - { columnName: orderLineId, columnType: string }
       - { columnName: order_id, columnType: string }
@@ -92,6 +92,72 @@ fragInputs:
     schema:
       - { columnName: item_id, columnType: string }
       - { columnName: product_id, columnType: string }
+
+  - id: fragInventoryItemProductLkup
+    description: Mapping fragment that will set the 'product_id' field based on a given 'item_id'
+    schema:
+      - { columnName: item_id, columnType: string }
+      - { columnName: product_id, columnType: string }
+
+  - id: fragMarketingProductIdLkup
+    description: Mapping fragment that will set the 'product_id' field based on a given 'target_product_id'
+    schema:
+      - { columnName: source_product_id, columnType: string }
+      - { columnName: target_product_id, columnType: string }
+
+  - id: fragProductSourceActivityItemProductLkup
+    description: Mapping fragment that will set the 'product_id' field based on a given 'item_id'
+    schema:
+      - { columnName: item_id, columnType: string }
+      - { columnName: product_id, columnType: string }
+
+  - id: fragInventoryProductItemTrans
+    description: Mapping fragment that will set the 'item_id' field based on a given 'product_id'
+    schema:
+      - { columnName: source_product_id, columnType: string }
+      - { columnName: target_item_id, columnType: string }
+
+  - id: fragProductInventoryStockSkuLkup
+    description: Mapping fragment that will set the 'item_id' field based on a given 'sku_value'
+    schema:
+      - { columnName: sku_value, columnType: string }
+      - { columnName: item_id, columnType: string }
+
+  - id: fragInventoryStoreList
+    description: Mapping fragment that will set the 'location_id' field based on a given 'site_id'
+    schema:
+      - { columnName: site_id, columnType: string }
+      - { columnName: location_id, columnType: string }
+
+  - id: fragInventoryItemTrans
+    description: Mapping fragment that will translate the item_id
+    schema:
+      - { columnName: source_item_id, columnType: string }
+      - { columnName: target_item_id, columnType: string }
+
+  - id: fragWebOrderRef
+    description: Mapping fragment that will translate the order_id
+    schema:
+      - { columnName: orderHeaderKey, columnType: string }
+      - { columnName: webOrderConfNumber, columnType: string }
+
+  - id: fragWebProductIdLkup
+    description: Mapping fragment that will set the 'product_id' field based on a given 'source_product_id'
+    schema:
+      - { columnName: source_product_id, columnType: string }
+      - { columnName: target_product_id, columnType: string }
+
+  - id: fragWebCustomerIdLkup
+    description: Mapping fragment that will set the 'customer_id' field based on a given 'source_customer_id'
+    schema:
+      - { columnName: source_customer_id, columnType: string }
+      - { columnName: target_customer_id, columnType: string }
+
+  - id: fragWebCustomerIdLkup
+    description: Mapping fragment that will set the 'email_address_id' field based on a given 'customer_id'
+    schema:
+      - { columnName: customer_id, columnType: string }
+      - { columnName: email_address, columnType: string }
 
   - id: fragOrderLinesPlacedTimestamp
     description: Mapping fragment that will set the 'placed_timestamp' based on 'order_id'
@@ -275,36 +341,157 @@ fragInputs:
       - { columnName: nameOut, columnType: string }
 
   - id: fragItemAttributes
-    isCore: true
     description: Core fragment which passes in all item attribute data by item id, attribute number and value
     schema:
       - { columnName: item_id, columnType: string }
       - { columnName: idx, columnType: integer }
       - { columnName: value, columnType: string }
 
-  - id: fragItemAttributesSegmentValue
+  - id: fragItemAttributesSegment
     description: Translation fragment that maps an item_id to a given 'segment' of a specific attribute number. This fragment only works in conjunction with fragItemAttributesSegment
     schema:
       - { columnName: item_id, columnType: string }
       - { columnName: idx, columnType: integer }
       - { columnName: segmentId, columnType: string }
 
-  - id: fragItemAttributesSegment
+  - id: fragItemAttributesSegmentValue
     description: Translation fragment that maps a given 'segment' to an attribute value. This fragment only works in conjunction with fragItemAttributesSegmentValue
     schema:
       - { columnName: idx, columnType: integer }
       - { columnName: segmentId, columnType: string }
       - { columnName: value, columnType: string}
 
+  - id: fragProductAttributes
+    description: "Core product attribute fragment"
+    schema:
+      - { columnName: product_id, columnType: string }
+      - { columnName: idx, columnType: integer }
+      - { columnName: value, columnType: string }
+      - { columnName: product_id_type, columnType: string }
+
+  - id: fragProductAttributesSegment
+    description: "Fragment."
+    schema:
+      - { columnName: product_id, columnType: string }
+      - { columnName: idx, columnType: integer }
+      - { columnName: segment_id, columnType: string }
+
+  - id: fragProductAttributesSegmentValue
+    description: "Fragment."
+    schema:
+      - { columnName: idx, columnType: integer }
+      - { columnName: segment_id, columnType: string }
+      - { columnName: value, columnType: string }
+
+  - id: fragOrderAttributes
+    description: "Core order attributes fragment"
+    schema:
+      - { columnName: order_id, columnType: string }
+      - { columnName: idx, columnType: integer }
+      - { columnName: value, columnType: string }
+
+  - id: fragOrderAttributesSegment
+    description: "Fragment."
+    schema:
+      - { columnName: order_id, columnType: string }
+      - { columnName: idx, columnType: integer }
+      - { columnName: segment_id, columnType: string }
+
+  - id: fragOrderAttributesSegmentValue
+    description: "Fragment."
+    dependencies:
+      - fragOrderAttributesSegment
+    schema:
+      - { columnName: idx, columnType: integer }
+      - { columnName: segment_id, columnType: string }
+      - { columnName: value, columnType: string }
+
+  - id: fragCustomerAttributes
+    description: "Core customer attribute fragment"
+    schema:
+      - { columnName: order_id, columnType: string }
+      - { columnName: idx, columnType: integer }
+      - { columnName: value, columnType: string }
+
+  - id: fragCustomerAttributesSegment
+    description: "Fragment."
+    dependencies:
+      - fragCustomerAttributesSegmentValue
+    schema:
+      - { columnName: customer_id, columnType: string }
+      - { columnName: idx, columnType: integer }
+      - { columnName: segment_id, columnType: string }
+
+  - id: fragCustomerAttributesSegmentValue
+    description: "Fragment."
+    dependencies:
+      - fragCustomerAttributesSegment
+    schema:
+      - { columnName: idx, columnType: integer }
+      - { columnName: segment_id, columnType: string }
+      - { columnName: value, columnType: string }
+
+  - id: fragSiteAttributes
+    description: "Core site attributes fragment"
+    schema:
+      - { columnName: channel, columnType: string }
+      - { columnName: sale_location1, columnType: string }
+      - { columnName: idx, columnType: integer }
+      - { columnName: value, columnType: string }
+
+  - id: fragSiteAttributesSegment
+    description: "Fragment."
+    dependencies:
+      - fragSiteAttributesSegmentValue
+    schema:
+      - { columnName: channel, columnType: string }
+      - { columnName: sale_location1, columnType: string }
+      - { columnName: idx, columnType: integer }
+      - { columnName: segment_id, columnType: string }
+
+  - id: fragSiteAttributesSegmentValue
+    description: "Fragment."
+    dependencies:
+      - fragSiteAttributesSegment
+    schema:
+      - { columnName: idx, columnType: integer }
+      - { columnName: segment_id, columnType: string }
+      - { columnName: value, columnType: string }
+
+  - id: fragStockLocationAttributes
+    description: "Core stock location attributes fragment"
+    schema:
+      - { columnName: stock_location, columnType: string }
+      - { columnName: idx, columnType: integer }
+      - { columnName: value, columnType: string }
+
+  - id: fragStockLocationAttributesSegmentValue
+    description: "Fragment."
+    dependencies:
+      - fragStockLocationAttributesSegment
+    schema:
+      - { columnName: stock_location, columnType: string }
+      - { columnName: idx, columnType: integer }
+      - { columnName: segment_id, columnType: string }
+
+  - id: fragStockLocationAttributesSegmentValue
+    description: "Fragment."
+    dependencies:
+      - fragStockLocationAttributesSegment
+    schema:
+      - { columnName: idx, columnType: integer }
+      - { columnName: segment_id, columnType: string }
+      - { columnName: value, columnType: string }
+
   - id: fragDataAnalyticsImport
     description: "Fragment for loading historical metrics or prior period data."
     schema:
-      - { columnName: startDate, columnType: date }
-      - { columnName: endDate, columnType: date }
-      - { columnName: metricId, columnType: string }
-      - { columnName: metricValue, columnType: double }
-      - { columnName: dimensionList, columnType: string }
-      - { columnName: dimensionValues, columnType: string }
+      - { columnName: start_date, columnType: date }
+      - { columnName: end_date, columnType: date }
+      - { columnName: metric, columnType: string }
+      - { columnName: value, columnType: double }
+      - { columnName: dimension_list, columnType: string }
+      - { columnName: dimension_values, columnType: string }
 
   - id: fragCalendar
     description: "Fragment with calendar information for the client's financial periods."
@@ -316,11 +503,11 @@ fragInputs:
       - { columnName: endDate, columnType: date }
       - { columnName: yearLabel, columnType: string }
 
-  - id: fragBusinessDays  #not in standard.yaml
-    description: "Mapping fragment for the client business day lookups for shipping information."
-    schema:
-      - { columnName: date, columnType: date }
-      - { columnName: is_non_business_day, columnType: boolean }
+##  - id: fragBusinessDays  #not in standard.yaml
+##    description: "Mapping fragment for the client business day lookups for shipping information."
+##    schema:
+##      - { columnName: date, columnType: date }
+##      - { columnName: is_non_business_day, columnType: boolean }
 
   - id: fragTrademarkTerms
     description: "Mapping fragment for search terms."
@@ -328,11 +515,1122 @@ fragInputs:
       - { columnName: search_string, columnType: string }
       - { columnName: longerThan3, columnType: string }
 
-
   - id: fragCurrencyConversionRates
     description: "Fragment for currency conversion rates."
     schema:
       - { columnName: date, columnType: date }
       - { columnName: currency_code, columnType: string }
       - { columnName: conversion_rate, columnType: double }
+
+   id: fragInventoryFulfilment
+   description: "Fragment that has inventory poduct locations"
+   schema:
+     - { columnName: date, columnType: date }
+     - { columnName: channel, columnType: string }
+     - { columnName: site_cat1, columnType: string }
+     - { columnName: location_id, columnType: string }
+     - { columnName: product_id, columnType: string }
+     - { columnName: item_id, columnType: string }
+     - { columnName: seller, columnType: string }
+     - { columnName: unit_cost, columnType: double }
+     - { columnName: currency, columnType: string }
+
+  - id: fragProductInventorySiteLkup
+    description: "Fragment for inventory site translations."
+    schema:
+      - { columnName: date, columnType: date }
+      - { columnName: site, columnType: string }
+      - { columnName: siteText, columnType: string }
+
+ - id: fragInventorySellingData
+   description: "Fragment that has inventory selling data."
+   schema:
+     - { columnName: channel, columnType: string }
+     - { columnName: site_cat1, columnType: string }
+     - { columnName: product_id, columnType: string }
+     - { columnName: item_id, columnType: string }
+     - { columnName: seller, columnType: string }
+     - { columnName: publish_date, columnType: date }
+     - { columnName: is_Markdown, columnType: string }
+     - { columnName: is_discontinued, columnType: string }
+     - { columnName: is_core, columnType: string }
+     - { columnName: season_start_date, columnType: date }
+     - { columnName: season_end_date, columnType: date }
+     - { columnName: is_sellable, columnType: string }
+     - { columnName: is_preorder, columnType: boolean }
+     - { columnName: is_backorder, columnType: boolean }
+
+  - id: fragInventorySiteList
+    description: "Fragment for inventory site translations."
+    schema:
+      - { columnName: site_id, columnType: string }
+
+  - id: fragInventoryLocationList
+    description: "Fragment for inventory location translations."
+    schema:
+      - { columnName: location_id, columnType: string }
+
+
+
+  - id: fragProductInventoryPrice
+    description: "Fragment that has inventory price info."
+    schema:
+      - { columnName: date, columnType: date }
+      - { columnName: product_id, columnType: string }
+      - { columnName: item_id, columnType: string }
+      - { columnName: channel, columnType: string }
+      - { columnName: site, columnType: string }
+      - { columnName: current_price, columnType: string }
+      - { columnName: current_price_ex_tax, columnType: string }
+      - { columnName: full_price, columnType: double }
+      - { columnName: full_price_ex_tax, columnType: string }
+      - { columnName: currency, columnType: string }
+
+  - id: fragInventorySaleLocation
+    description: "Fragment that has inventory the sale location and price info."
+    schema:
+      - { columnName: date, columnType: date }
+      - { columnName: channel, columnType: string }
+      - { columnName: site_cat1, columnType: string }
+      - { columnName: product_id, columnType: string }
+      - { columnName: item_id, columnType: string }
+      - { columnName: seller, columnType: string }
+      - { columnName: publish_date, columnType: date }
+      - { columnName: is_markdown, columnType: string }
+      - { columnName: is_discontinued, columnType: string }
+      - { columnName: is_core, columnType: string }
+      - { columnName: season_start_date, columnType: date }
+      - { columnName: season_end_date, columnType: date }
+      - { columnName: is_sellable, columnType: string }
+      - { columnName: is_preorder, columnType: boolean }
+      - { columnName: is_backorder, columnType: boolean }
+      - { columnName: current_price, columnType: float }
+      - { columnName: current_price_ex_tax, columnType: float }
+      - { columnName: full_price, columnType: float }
+      - { columnName: full_price_ex_tax, columnType: float }
+      - { columnName: currency, columnType: string }
+      - { columnName: preorder_units, columnType: integer }
+      - { columnName: backorder_units, columnType: integer }
+      - { columnName: waitlist_units, columnType: integer }
+
+  - id: fragInventoryStockLocation
+    description: "Fragment that has inventory the stock location and unit cost info."
+    schema:
+      - { columnName: date, columnType: date }
+      - { columnName: location_id, columnType: string }
+      - { columnName: product_id, columnType: string }
+      - { columnName: item_id, columnType: string }
+      - { columnName: seller, columnType: string }
+      - { columnName: is_supplier_owned, columnType: boolean }
+      - { columnName: is_non_stockable, columnType: boolean }
+      - { columnName: units_in_stock, columnType: integer }
+      - { columnName: lead_time_days, columnType: integer }
+      - { columnName: unit_cost, columnType: float }
+      - { columnName: currency, columnType: string }
+      - { columnName: is_reorderable, columnType: boolean }
+
+  - id: fragInventoryStockLocationProduct
+    description: "Fragment that has inventory the stock location and unit cost info."
+    schema:
+      - { columnName: date, columnType: date }
+      - { columnName: location_id, columnType: string }
+      - { columnName: product_id, columnType: string }
+      - { columnName: seller, columnType: string }
+      - { columnName: is_supplier_owned, columnType: boolean }
+      - { columnName: is_non_stockable, columnType: boolean }
+      - { columnName: lead_time_days, columnType: integer }
+      - { columnName: unit_cost, columnType: float }
+      - { columnName: currency, columnType: string }
+      - { columnName: is_reorderable, columnType: boolean }
+
+  - id: fragProductInventoryCostProductLkup
+    description: "Fragment."
+    schema:
+      - { columnName: productValue, columnType: string }
+      - { columnName: product_id, columnType: string }
+
+  - id: fragProductInventoryCostSkuLkup
+    description: "Fragment."
+    schema:
+      - { columnName: skuValue, columnType: string }
+      - { columnName: item_id, columnType: string }
+
+  - id: fragProductInventoryStock
+    description: "Fragment."
+    schema:
+      - { columnName: date, columnType: date }
+      - { columnName: product_id, columnType: string }
+      - { columnName: item_id, columnType: string }
+      - { columnName: site, columnType: string }
+      - { columnName: units_in_stock_online, columnType: integer }
+      - { columnName: units_in_stock_offline, columnType: integer }
+
+  - id: fragMobileDevices
+    description: "Fragment."
+    schema:
+      - { columnName: date, columnType: date }
+      - { columnName: device_name, columnType: string }
+      - { columnName: device_type, columnType: string }
+      - { columnName: visits, columnType: long }
+      - { columnName: one_page_visits, columnType: long }
+      - { columnName: orders, columnType: long }
+      - { columnName: site_cat1, columnType: string }
+      - { columnName: site_cat2, columnType: string }
+
+  - id: fragOrderSources
+    description: "Fragment."
+    schema:
+      - { columnName: order_date, columnType: date }
+      - { columnName: order_id, columnType: string }
+      - { columnName: mkt_channel, columnType: string }
+      - { columnName: mkt_param1, columnType: string }
+      - { columnName: mkt_param2, columnType: string }
+      - { columnName: mkt_param3, columnType: string }
+      - { columnName: mkt_param4, columnType: string }
+      - { columnName: click_timestamp, columnType: date }
+      - { columnName: weight, columnType: double }
+
+  - id: fragOrders
+    isCore: true
+    description: This is the core fragment for feedOrders.
+    schema:
+      - { columnName: order_id, columnType: string }
+      - { columnName: placed_timestamp, columnType: date }
+      - { columnName: channel, columnType: string }
+      - { columnName: site_cat1, columnType: string }
+      - { columnName: site_cat2, columnType: string }
+      - { columnName: customer_id, columnType: string }
+      - { columnName: customer_email, columnType: string }
+      - { columnName: payment_info, columnType: string }
+      - { columnName: currency_code, columnType: string }
+      - { columnName: sales, columnType: double }
+      - { columnName: sales_ex_tax, columnType: double }
+      - { columnName: order_type, columnType: string }
+      - { columnName: bought_online, columnType: string }
+      - { columnName: customer_service_contacts, columnType: integer }
+      - { columnName: purchase_channel, columnType: string }
+
+  - id: fragOrdersPayment
+    description: "Fragment."
+    schema:
+      - { columnName: order_id, columnType: string }
+      - { columnName: payment_info, columnType: string }
+
+  - id: fragOrdersSales
+    description: "Fragment."
+    schema:
+      - { columnName: order_id, columnType: string }
+      - { columnName: sales, columnType: double }
+      - { columnName: sales_ex_tax, columnType: double }
+      - { columnName: currency_code, columnType: string }
+
+  - id: fragOrdersCustomer
+    description: "Fragment."
+    schema:
+      - { columnName: order_id, columnType: string }
+      - { columnName: customer_id, columnType: string }
+      - { columnName: customer_email, columnType: string }
+
+  - id: fragOrdersBoughtOnline
+    description: "Fragment."
+    schema:
+      - { columnName: order_id, columnType: string }
+      - { columnName: bought_online, columnType: string }
+
+  - id: fragOrdersSite
+    description: "Fragment."
+    schema:
+      - { columnName: order_id, columnType: string }
+      - { columnName: site_cat1, columnType: string }
+      - { columnName: site_cat2, columnType: string }
+
+  - id: fragOrdersPurchaseChannel
+    description: "Fragment."
+    schema:
+      - { columnName: order_id, columnType: string }
+      - { columnName: purchase_channel, columnType: string }
+
+  - id: fragOrdersOrderType
+    description: "Fragment."
+    schema:
+      - { columnName: order_id, columnType: string }
+      - { columnName: order_type, columnType: string }
+
+  - id: fragOrdersServiceContacts
+    description: "Fragment."
+    schema:
+      - { columnName: order_id, columnType: string }
+      - { columnName: customer_service_contacts, columnType: integer }
+
+  - id: fragSourcesMarketing
+    description: "Fragment."
+    schema:
+      - { columnName: mkt_channel, columnType: string }
+      - { columnName: mkt_param1, columnType: string }
+      - { columnName: mkt_param2, columnType: string }
+      - { columnName: mkt_param3, columnType: string }
+      - { columnName: mkt_param4, columnType: string }
+      - { columnName: mkt_channel_text, columnType: string }
+      - { columnName: mkt_param1_text, columnType: string }
+      - { columnName: mkt_param2_text, columnType: string }
+      - { columnName: mkt_param3_text, columnType: string }
+      - { columnName: mkt_param4_text, columnType: string }
+
+  - id: fragPageSourceActivity
+    description: "Fragment."
+    schema:
+      - { columnName: date, columnType: date }
+      - { columnName: mkt_channel, columnType: string }
+      - { columnName: mkt_param1, columnType: string }
+      - { columnName: mkt_param2, columnType: string }
+      - { columnName: mkt_param3, columnType: string }
+      - { columnName: mkt_param4, columnType: string }
+      - { columnName: site_cat1, columnType: string }
+      - { columnName: site_cat2, columnType: string }
+      - { columnName: page_type, columnType: string }
+      - { columnName: page_name, columnType: string }
+      - { columnName: product_id, columnType: string }
+      - { columnName: source_type, columnType: string }
+      - { columnName: page_category_1, columnType: string }
+      - { columnName: page_category_2, columnType: string }
+      - { columnName: page_category_3, columnType: string }
+      - { columnName: page_category_4, columnType: string }
+      - { columnName: page_category_5, columnType: string }
+      - { columnName: page_visits, columnType: integer }
+      - { columnName: one_page_visits, columnType: integer }
+      - { columnName: page_views, columnType: integer }
+      - { columnName: entry_page_views, columnType: integer }
+      - { columnName: exit_page_views, columnType: integer }
+      - { columnName: new_page_visits, columnType: integer }
+      - { columnName: total_search_results, columnType: double }
+      - { columnName: total_time_on_page, columnType: double }
+      - { columnName: search_token_count, columnType: integer }
+      - { columnName: search_filter_count, columnType: integer }
+      - { columnName: search_term, columnType: string }
+
+   - id: fragPageNameLkup
+    description: "Fragment."
+    schema:
+      - { columnName: page_name, columnType: string }
+      - { columnName: page_name_lkup, columnType: string }
+
+   - id: fragProductSets
+    description: "Fragment."
+    schema:
+      - { columnName: set_id, columnType: string }
+      - { columnName: product_id, columnType: string }
+      - { columnName: min_stock_units, columnType: integer }
+
+  - id: fragPageSourceActivitySearchResults
+    description: "Fragment."
+    schema:
+      - { columnName: date, columnType: date }
+      - { columnName: search_term, columnType: string }
+      - { columnName: result_count, columnType: long }
+      - { columnName: token_count, columnType: integer }
+      - { columnName: filter_count, columnType: long }
+      - { columnName: searches, columnType: long }
+
+  - id: fragPageSourcesProductId
+    description: "Fragment."
+    schema:
+      - { columnName: page_name, columnType: string }
+      - { columnName: product_id, columnType: string }
+
+  - id: fragPageSourcesSearch
+    description: "Fragment."
+    schema:
+      - { columnName: date, columnType: date }
+      - { columnName: mkt_channel, columnType: string }
+      - { columnName: mkt_param1, columnType: string }
+      - { columnName: mkt_param2, columnType: string }
+      - { columnName: mkt_param3, columnType: string }
+      - { columnName: mkt_param4, columnType: string }
+      - { columnName: site_cat2, columnType: string }
+      - { columnName: site_cat1, columnType: string }
+      - { columnName: page_type, columnType: string }
+      - { columnName: page_name, columnType: string }
+      - { columnName: product_id, columnType: string }
+      - { columnName: source_type, columnType: string }
+      - { columnName: total_search_results, columnType: double }
+      - { columnName: search_token_count, columnType: integer }
+      - { columnName: search_filter_count, columnType: integer }
+      - { columnName: search_term, columnType: string }
+
+  - id: fragPageSourcesCategoriesLkup
+    description: "Fragment."
+    schema:
+      - { columnName: page_category_id, columnType: string }
+      - { columnName: page_category_1, columnType: string }
+      - { columnName: page_category_2, columnType: string }
+      - { columnName: page_category_3, columnType: string }
+      - { columnName: page_category_4, columnType: string }
+      - { columnName: page_category_5, columnType: string }
+
+  - id: fragPageSourcesPageDetails
+    description: "Fragment."
+    schema:
+      - { columnName: page_name, columnType: string }
+      - { columnName: page_type, columnType: string }
+      - { columnName: page_category_1, columnType: string }
+      - { columnName: page_category_2, columnType: string }
+      - { columnName: page_category_3, columnType: string }
+      - { columnName: page_category_4, columnType: string }
+      - { columnName: page_category_5, columnType: string }
+
+  - id: fragSourcesPageType
+    description: "Fragment."
+    schema:
+      - { columnName: inputValue, columnType: string }
+      - { columnName: outputValue, columnType: string }
+      - { columnName: matchType, columnType: string }
+
+  - id: fragPageSourceOrders
+    description: "Fragment."
+    schema:
+      - { columnName: date, columnType: date }
+      - { columnName: site_cat1, columnType: string }
+      - { columnName: site_cat2, columnType: string }
+      - { columnName: page_type, columnType: string }
+      - { columnName: page_name, columnType: string }
+      - { columnName: product_id, columnType: string }
+      - { columnName: search_term, columnType: string }
+      - { columnName: page_category_1, columnType: string }
+      - { columnName: page_category_2, columnType: string }
+      - { columnName: page_category_3, columnType: string }
+      - { columnName: page_category_4, columnType: string }
+      - { columnName: page_category_5, columnType: string }
+      - { columnName: order_influence, columnType: double }
+      - { columnName: sales_influence, columnType: double }
+      - { columnName: currency_code, columnType: string }
+
+  - id: fragProductProperties
+    description: "Fragment."
+    schema:
+      - { columnName: product_id, columnType: string }
+      - { columnName: product_name, columnType: string }
+      - { columnName: brand, columnType: string }
+      - { columnName: category1, columnType: string }
+      - { columnName: category2, columnType: string }
+      - { columnName: category3, columnType: string }
+      - { columnName: category4, columnType: string }
+      - { columnName: category5, columnType: string }
+
+  - id: fragProductPropertiesItem
+    description: "Fragment."
+    schema:
+      - { columnName: item_id, columnType: string }
+      - { columnName: product_name, columnType: string }
+      - { columnName: brand, columnType: string }
+      - { columnName: category1, columnType: string }
+      - { columnName: category2, columnType: string }
+      - { columnName: category3, columnType: string }
+      - { columnName: category4, columnType: string }
+      - { columnName: category5, columnType: string }
+
+  - id: fragProductPropertiesCategories
+    description: "Fragment."
+    schema:
+      - { columnName: product_id, columnType: string }
+      - { columnName: category1, columnType: string }
+      - { columnName: category2, columnType: string }
+      - { columnName: category3, columnType: string }
+      - { columnName: category4, columnType: string }
+      - { columnName: category5, columnType: string }
+
+  - id: fragProductPropertiesCategoriesGroup
+    description: "Fragment."
+    schema:
+      - { columnName: category_id, columnType: string }
+      - { columnName: category1, columnType: string }
+      - { columnName: category2, columnType: string }
+      - { columnName: category3, columnType: string }
+      - { columnName: category4, columnType: string }
+      - { columnName: category5, columnType: string }
+
+  - id: fragProductPropertiesCategoriesId
+    description: "Fragment."
+    schema:
+      - { columnName: product_id, columnType: string }
+      - { columnName: category_id, columnType: string }
+
+  - id: fragProductSourceActivity
+    description: "Fragment."
+    schema:
+      - { columnName: date, columnType: date }
+      - { columnName: mkt_channel, columnType: string }
+      - { columnName: mkt_param1, columnType: string }
+      - { columnName: mkt_param2, columnType: string }
+      - { columnName: mkt_param3, columnType: string }
+      - { columnName: mkt_param4, columnType: string }
+      - { columnName: site_cat1, columnType: string }
+      - { columnName: site_cat2, columnType: string }
+      - { columnName: product_id, columnType: string }
+      - { columnName: product_views, columnType: integer }
+      - { columnName: adding_sessions, columnType: integer }
+      - { columnName: items_added, columnType: integer }
+      - { columnName: units_sold, columnType: integer }
+      - { columnName: in_stock_views, columnType: double }
+
+  - id: fragProductSourceActivityCartItems
+    description: "Fragment."
+    schema:
+      - { columnName: date, columnType: date }
+      - { columnName: mkt_channel, columnType: string }
+      - { columnName: mkt_param1, columnType: string }
+      - { columnName: mkt_param2, columnType: string }
+      - { columnName: mkt_param3, columnType: string }
+      - { columnName: mkt_param4, columnType: string }
+      - { columnName: site_cat1, columnType: string }
+      - { columnName: site_cat2, columnType: string }
+      - { columnName: item_id, columnType: string }
+      - { columnName: items_added, columnType: integer }
+      - { columnName: units_sold, columnType: integer }
+
+  - id: fragShipments
+    isCore: true
+    description: This is the core fragment for feedShipments.
+    schema:
+      - { columnName: orderLineId, columnType: string }
+      - { columnName: shipment_id, columnType: string }
+      - { columnName: order_id, columnType: string }
+      - { columnName: shipment_timestamp, columnType: date }
+      - { columnName: channel, columnType: string }
+      - { columnName: site_cat1, columnType: string }
+      - { columnName: site_cat2, columnType: string }
+      - { columnName: shipping_cost, columnType: double }
+      - { columnName: shipping_partner, columnType: string }
+      - { columnName: shipping_method, columnType: string }
+      - { columnName: fulfillment_location, columnType: string }
+      - { columnName: fulfillment_location_type, columnType: string }
+      - { columnName: delivery_location_type, columnType: string }
+      - { columnName: delivery_country, columnType: string }
+      - { columnName: delivery_region, columnType: string }
+      - { columnName: delivery_postal_code, columnType: string }
+      - { columnName: item_id, columnType: string }
+      - { columnName: product_id, columnType: string }
+      - { columnName: seller, columnType: string }
+      - { columnName: quantity, columnType: integer }
+      - { columnName: shipped_with_partial_stock, columnType: boolean }
+
+  - id: fragShipmentsId
+    description: "Fragment."
+    schema:
+      - { columnName: shipment_id, columnType: string }
+      - { columnName: order_id, columnType: string }
+      - { columnName: orderLineId, columnType: string }
+
+  - id: fragShipmentsMethod
+    description: "Fragment."
+    schema:
+      - { columnName: shipment_id, columnType: string }
+      - { columnName: order_id, columnType: string }
+      - { columnName: orderLineId, columnType: string }
+      - { columnName: shipping_partner, columnType: string }
+      - { columnName: shipping_method, columnType: string }
+
+  - id: fragShipmentsOrders
+    description: "This is for when shipments are split between different source files. It is paired with fragShipmentsProducts to build the shipments feed."
+    dependencies:
+      - fragShipmentsProducts
+    schema:
+      - { columnName: shipment_id, columnType: string }
+      - { columnName: order_id, columnType: string }
+      - { columnName: shipment_timestamp, columnType: date }
+      - { columnName: shipment_timestamp_dateRef, columnType: integer }
+      - { columnName: site_cat2, columnType: string }
+      - { columnName: site_cat1, columnType: string }
+      - { columnName: shipping_cost, columnType: double }
+      - { columnName: shipping_partner, columnType: string }
+      - { columnName: shipping_method, columnType: string }
+      - { columnName: fulfillment_location, columnType: string }
+      - { columnName: fulfillment_location_type, columnType: string }
+      - { columnName: delivery_location_type, columnType: string }
+      - { columnName: delivery_country, columnType: string }
+      - { columnName: delivery_region, columnType: string }
+      - { columnName: delivery_postal_code, columnType: string }
+      - { columnName: item_id, columnType: string }
+      - { columnName: product_id, columnType: string }
+      - { columnName: quantity, columnType: integer }
+      - { columnName: shipped_with_partial_stock, columnType: boolean }
+
+  - id: fragShipmentsProducts
+    description: "This is for when shipments are split between different source files. It is paired with fragShipmentsOrders to build the shipments feed."
+    dependencies:
+      - fragShipmentsOrders
+    schema:
+      - { columnName: order_id, columnType: string }
+      - { columnName: product_id, columnType: string }
+      - { columnName: item_id, columnType: string }
+      - { columnName: quantity, columnType: integer }
+
+  - id: fragPageCountries
+    description: "Fragment."
+    schema:
+      - { columnName: date, columnType: date }
+      - { columnName: site_cat1, columnType: string }
+      - { columnName: site_cat2, columnType: string }
+      - { columnName: page_type, columnType: string }
+      - { columnName: page_name, columnType: string }
+      - { columnName: page_category_1, columnType: string }
+      - { columnName: page_category_2, columnType: string }
+      - { columnName: page_category_3, columnType: string }
+      - { columnName: country, columnType: string }
+      - { columnName: page_visits, columnType: long }
+      - { columnName: one_page_visits, columnType: long }
+      - { columnName: page_views, columnType: long }
+      - { columnName: entry_page_views, columnType: long }
+      - { columnName: exit_page_views, columnType: long }
+      - { columnName: order_influence, columnType: long }
+      - { columnName: sales_influence, columnType: double }
+      - { columnName: total_time_on_page, columnType: double }
+
+  - id: fragMarketingPpc
+    description: "Fragment."
+    schema:
+      - { columnName: date, columnType: date }
+      - { columnName: mkt_param1, columnType: string }
+      - { columnName: mkt_param2, columnType: string }
+      - { columnName: mkt_param3, columnType: string }
+      - { columnName: mkt_param4, columnType: string }
+      - { columnName: site_cat1, columnType: string }
+      - { columnName: site_cat2, columnType: string }
+      - { columnName: product_id, columnType: string }
+      - { columnName: marketing_cost, columnType: double }
+      - { columnName: clicks, columnType: long }
+      - { columnName: impressions, columnType: long }
+      - { columnName: account, columnType: string }
+      - { columnName: campaign, columnType: string }
+      - { columnName: adgroup, columnType: string }
+      - { columnName: creative, columnType: string }
+      - { columnName: keyword, columnType: string }
+      - { columnName: match_type, columnType: string }
+      - { columnName: quality_score, columnType: double }
+      - { columnName: avg_pos_rank, columnType: double }
+      - { columnName: relevance, columnType: double }
+      - { columnName: search_engine, columnType: string }
+      - { columnName: sales, columnType: double }
+      - { columnName: orders, columnType: double }
+      - { columnName: order_id, columnType: string }
+      - { columnName: landing_page_type, columnType: string }
+      - { columnName: first_page_cpc, columnType: double }
+      - { columnName: ad_type, columnType: string }
+      - { columnName: ad_id, columnType: string }
+      - { columnName: campaign_status, columnType: string }
+      - { columnName: adgroup_status, columnType: string }
+      - { columnName: keyword_status, columnType: string }
+      - { columnName: click_assisted_orders, columnType: double }
+      - { columnName: impression_assisted_orders, columnType: double }
+
+  - id: fragMarketingPpc90Days
+    description: "Fragment."
+    schema:
+      - { columnName: date, columnType: date }
+      - { columnName: mkt_param1, columnType: string }
+      - { columnName: mkt_param2, columnType: string }
+      - { columnName: mkt_param3, columnType: string }
+      - { columnName: mkt_param4, columnType: string }
+      - { columnName: site_cat1, columnType: string }
+      - { columnName: site_cat2, columnType: string }
+      - { columnName: product_id, columnType: string }
+      - { columnName: account, columnType: string }
+      - { columnName: campaign, columnType: string }
+      - { columnName: adgroup, columnType: string }
+      - { columnName: creative, columnType: string }
+      - { columnName: keyword, columnType: string }
+      - { columnName: match_type, columnType: string }
+      - { columnName: search_engine, columnType: string }
+      - { columnName: sales, columnType: double }
+      - { columnName: orders, columnType: double }
+      - { columnName: landing_page_type, columnType: string }
+      - { columnName: ad_type, columnType: string }
+      - { columnName: ad_id, columnType: string }
+      - { columnName: currencyCode, columnType: string }
+
+  - id: fragMarketingMarketing
+    description: "Same fields as fragSourcesMarketing"
+    schema:
+      - { columnName: mkt_channel, columnType: string }
+      - { columnName: mkt_param1, columnType: string }
+      - { columnName: mkt_param2, columnType: string }
+      - { columnName: mkt_param3, columnType: string }
+      - { columnName: mkt_param4, columnType: string }
+      - { columnName: mkt_channel_text, columnType: string }
+      - { columnName: mkt_param1_text, columnType: string }
+      - { columnName: mkt_param2_text, columnType: string }
+      - { columnName: mkt_param3_text, columnType: string }
+      - { columnName: mkt_param4_text, columnType: string }
+
+  - id: fragProductImageUrls
+    description: "Fragment."
+    schema:
+      - { columnName: product_id, columnType: string }
+      - { columnName: image_url, columnType: string }
+
+  - id: fragProductImageUrlsByItem
+    description: "Fragment."
+    schema:
+      - { columnName: item_id, columnType: string }
+      - { columnName: image_url, columnType: string }
+
+  - id: fragCancellations
+    description: "This is the core fragment for feedCancellations."
+    schema:
+      - { columnName: orderLineId, columnType: string }
+      - { columnName: order_id, columnType: string }
+      - { columnName: item_id, columnType: string }
+      - { columnName: product_id, columnType: string }
+      - { columnName: seller, columnType: string }
+      - { columnName: quantity, columnType: integer }
+      - { columnName: cancellation_timestamp, columnType: date }
+      - { columnName: channel, columnType: string }
+      - { columnName: site_cat1, columnType: string }
+      - { columnName: site_cat2, columnType: string }
+      - { columnName: initiated_by, columnType: string }
+      - { columnName: reason_internal, columnType: string }
+      - { columnName: reason_display, columnType: string }
+      - { columnName: refund_amount, columnType: double }
+      - { columnName: currency_code, columnType: string }
+
+  - id: fragCancellationsReasons
+    description: "This fragment is for cancellation reasons."
+    schema:
+      - { columnName: orderLineId, columnType: string }
+      - { columnName: order_id, columnType: string }
+      - { columnName: item_id, columnType: string }
+      - { columnName: initiated_by, columnType: string }
+      - { columnName: reason, columnType: string }
+
+  - id: fragCancellationsReasonsLkup
+    description: "This is for cancellations reason lookups."
+    schema:
+      - { columnName: reason, columnType: string }
+      - { columnName: reason_text, columnType: string }
+
+  - id: fragMarketingEmail
+    description: "Fragment."
+    schema:
+      - { columnName: date, columnType: date }
+      - { columnName: mkt_param1, columnType: string }
+      - { columnName: mkt_param2, columnType: string }
+      - { columnName: mkt_param3, columnType: string }
+      - { columnName: mkt_param4, columnType: string }
+      - { columnName: site_cat1, columnType: string }
+      - { columnName: site_cat2, columnType: string }
+      - { columnName: product_id, columnType: string }
+      - { columnName: marketing_cost, columnType: double }
+      - { columnName: clicks, columnType: long }
+      - { columnName: emails_sent, columnType: long }
+      - { columnName: opens, columnType: long }
+      - { columnName: complaints, columnType: long }
+      - { columnName: forwards, columnType: long }
+      - { columnName: hard_bounces, columnType: long }
+      - { columnName: soft_bounces, columnType: long }
+      - { columnName: sales, columnType: double }
+      - { columnName: orders, columnType: double }
+      - { columnName: order_id, columnType: string }
+      - { columnName: currencyCode, columnType: string }
+
+  - id: fragMarketingEmailFixedCost
+    description: "Fragment."
+    schema:
+      - { columnName: fixed, columnType: double }
+      - { columnName: perEmail, columnType: double }
+      - { columnName: overwrite, columnType: boolean }
+
+  - id: fragMarketingAffiliate
+    description: "Fragment."
+    schema:
+      - { columnName: date, columnType: date }
+      - { columnName: mkt_param1, columnType: string }
+      - { columnName: mkt_param2, columnType: string }
+      - { columnName: mkt_param3, columnType: string }
+      - { columnName: mkt_param4, columnType: string }
+      - { columnName: site_cat1, columnType: string }
+      - { columnName: site_cat2, columnType: string }
+      - { columnName: product_id, columnType: string }
+      - { columnName: marketing_cost, columnType: double }
+      - { columnName: clicks, columnType: long }
+      - { columnName: impressions, columnType: long }
+      - { columnName: sales, columnType: double }
+      - { columnName: orders, columnType: double }
+      - { columnName: order_id, columnType: string }
+      - { columnName: currencyCode, columnType: string }
+
+  - id: fragMarketingOther
+    description: "Fragment."
+    schema:
+      - { columnName: date, columnType: date }
+      - { columnName: mkt_channel, columnType: string }
+      - { columnName: mkt_param1, columnType: string }
+      - { columnName: mkt_param2, columnType: string }
+      - { columnName: mkt_param3, columnType: string }
+      - { columnName: mkt_param4, columnType: string }
+      - { columnName: site_cat1, columnType: string }
+      - { columnName: site_cat2, columnType: string }
+      - { columnName: product_id, columnType: string }
+      - { columnName: marketing_cost, columnType: double }
+      - { columnName: clicks, columnType: long }
+      - { columnName: impressions, columnType: long }
+      - { columnName: sales, columnType: double }
+      - { columnName: orders, columnType: double }
+      - { columnName: order_id, columnType: string }
+      - { columnName: currencyCode, columnType: string }
+
+  - id: fragMarketingOtherInternalProductCost
+    description: "Fragment."
+    schema:
+      - { columnName: mkt_channel, columnType: string }
+      - { columnName: mkt_param1, columnType: string }
+      - { columnName: product_id, columnType: string }
+      - { columnName: marketing_cost, columnType: double }
+      - { columnName: currencyCode, columnType: string }
+
+  - id: fragMarketingOrderRef
+    description: "Fragment."
+    schema:
+      - { columnName: marketingOrderId, columnType: string }
+      - { columnName: order_id, columnType: string }
+
+  - id: fragExternalSales
+    description: "This is the core fragment for feedExternalSales."
+    schema:
+      - { columnName: product_id, columnType: string }
+      - { columnName: item_id, columnType: string }
+      - { columnName: stock_location_id, columnType: string }
+      - { columnName: external_units_sold, columnType: integer }
+      - { columnName: external_sales, columnType: double }
+      - { columnName: currency_code, columnType: string }
+
+  - id: fragTargetData
+    description: "Fragment for loading target metrics data."
+    schema:
+      - { columnName: start_date, columnType: date }
+      - { columnName: end_date, columnType: date }
+      - { columnName: metric, columnType: string }
+      - { columnName: value, columnType: double }
+      - { columnName: dimension_list, columnType: string }
+      - { columnName: dimension_values, columnType: string }
+
+  - id: fragProductRatings
+    description: "Core fragment for feedProductRatings."
+    schema:
+      - { columnName: date, columnType: date }
+      - { columnName: product_id, columnType: string }
+      - { columnName: rating_count, columnType: integer }
+      - { columnName: review_count, columnType: integer }
+      - { columnName: avg_rating, columnType: float }
+      - { columnName: likelihood_to_recommend, columnType: float }
+
+  - id: fragPurchaseOrders
+    description: "Core fragment for feedPurchaseOrders."
+    schema:
+      - { columnName: date, columnType: date }
+      - { columnName: product_id, columnType: string }
+      - { columnName: item_id, columnType: string }
+      - { columnName: seller, columnType: string }
+      - { columnName: units_on_order, columnType: integer }
+      - { columnName: location_id, columnType: string }
+      - { columnName: expected_delivery_date, columnType: date }
+      - { columnName: last_po_date, columnType: date }
+      - { columnName: last_po_units, columnType: integer }
+
+  - id: fragCustomerActivity
+    description: "Core fragment for feedCustomerActivity."
+    schema:
+      - { columnName: date, columnType: date }
+      - { columnName: customer_id, columnType: string }
+      - { columnName: email_address, columnType: string }
+      - { columnName: product_id, columnType: string }
+      - { columnName: product_views, columnType: integer }
+      - { columnName: items_abandoned, columnType: integer }
+      - { columnName: site_cat1, columnType: string }
+      - { columnName: site_cat2, columnType: string }
+
+  - id: fragDeclines
+    description: "This is the core fragment for feedDeclines."
+    schema:
+      - { columnName: order_id, columnType: string }
+      - { columnName: decline_timestamp, columnType: date }
+      - { columnName: channel, columnType: string }
+      - { columnName: site_cat1, columnType: string }
+      - { columnName: site_cat2, columnType: string }
+      - { columnName: reason_internal, columnType: string }
+      - { columnName: reason_display, columnType: string }
+
+  - id: fragDeclinesReasons
+    description: "This fragment is for declined order reasons."
+    schema:
+      - { columnName: order_id, columnType: string }
+      - { columnName: reason, columnType: string }
+
+  - id: fragProductImpressions
+    description: "This is the core fragment for feedProductImpressions."
+    schema:
+      - { columnName: date, columnType: date }
+      - { columnName: site_cat1, columnType: string }
+      - { columnName: site_cat2, columnType: string }
+      - { columnName: product_id, columnType: string }
+      - { columnName: impression_type, columnType: string }
+      - { columnName: impressions, columnType: long }
+
+  - id: fragInventoryStoreLocation
+    description: "This is the core fragment for feedInventoryStoreLocation."
+    schema:
+      - { columnName: date, columnType: date }
+      - { columnName: channel, columnType: string }
+      - { columnName: site_cat1, columnType: string }
+      - { columnName: location_id, columnType: string }
+      - { columnName: product_id, columnType: string }
+      - { columnName: item_id, columnType: string }
+      - { columnName: seller, columnType: string }
+      - { columnName: publish_date, columnType: date }
+      - { columnName: is_markdown, columnType: string }
+      - { columnName: is_discontinued, columnType: string }
+      - { columnName: is_core, columnType: string }
+      - { columnName: season_start_date, columnType: date }
+      - { columnName: season_end_date, columnType: date }
+      - { columnName: is_sellable, columnType: string }
+      - { columnName: is_preorder, columnType: boolean }
+      - { columnName: is_backorder, columnType: boolean }
+      - { columnName: current_price, columnType: float }
+      - { columnName: current_price_ex_tax, columnType: float }
+      - { columnName: full_price, columnType: float }
+      - { columnName: full_price_ex_tax, columnType: float }
+      - { columnName: price_currency, columnType: string }
+      - { columnName: preorder_units, columnType: integer }
+      - { columnName: backorder_units, columnType: integer }
+      - { columnName: waitlist_units, columnType: integer }
+      - { columnName: is_non_stockable, columnType: boolean }
+      - { columnName: units_in_stock, columnType: integer }
+      - { columnName: units_site_location_reserved, columnType: integer }
+      - { columnName: lead_time_days, columnType: integer }
+      - { columnName: unit_cost, columnType: float }
+      - { columnName: cost_currency, columnType: string }
+      - { columnName: is_reorderable, columnType: boolean }
+
+
+  - id: fragOrderAdjustments
+    description: "This is the core fragment for feedOrderAdjustments."
+    schema:
+      - { columnName: adjustment_date, columnType: date }
+      - { columnName: order_id, columnType: string }
+      - { columnName: product_id, columnType: string }
+      - { columnName: item_id, columnType: string }
+      - { columnName: seller, columnType: string }
+      - { columnName: adjustment_value, columnType: double }
+      - { columnName: currency_code, columnType: string }
+      - { columnName: reason, columnType: string }
+      - { columnName: channel, columnType: string }
+      - { columnName: site_cat1, columnType: string }
+      - { columnName: site_cat1, columnType: string }
+
+  - id: fragStoreLocation
+    description: "Core fragment for feedStoreLocation."
+    schema:
+      - { columnName: date, columnType: date }
+      - { columnName: sale_location1, columnType: string }
+      - { columnName: size, columnType: double }
+      - { columnName: footfall, columnType: long }
+
+  - id: fragStorePickups
+    description: "Core fragment for feedStorePickups."
+    schema:
+      - { columnName: orderLineId, columnType: string }
+      - { columnName: order_id, columnType: string }
+      - { columnName: item_id, columnType: string }
+      - { columnName: product_id, columnType: string }
+      - { columnName: seller, columnType: string }
+      - { columnName: quantity, columnType: integer }
+      - { columnName: pick_up_timestamp, columnType: date }
+      - { columnName: channel, columnType: string }
+      - { columnName: site_cat1, columnType: string }
+      - { columnName: site_cat2, columnType: string }
+      - { columnName: pickup_channel, columnType: string }
+      - { columnName: pickup_site_cat1, columnType: string }
+      - { columnName: pickup_site_cat2, columnType: string }
+
+  - id: fragDeliveries
+    description: "This is the core fragment for feedDeliveries."
+    schema:
+      - { columnName: orderLineId, columnType: string }
+      - { columnName: shipment_id, columnType: string }
+      - { columnName: order_id, columnType: string }
+      - { columnName: delivery_timestamp, columnType: date }
+      - { columnName: delivery_date_ref, columnType: integer }
+      - { columnName: channel, columnType: string }
+      - { columnName: site_cat1, columnType: string }
+      - { columnName: site_cat2, columnType: string }
+      - { columnName: shipping_partner, columnType: string }
+      - { columnName: shipping_method, columnType: string }
+      - { columnName: delivery_location_type, columnType: string }
+      - { columnName: delivery_country, columnType: string }
+      - { columnName: delivery_region, columnType: string }
+      - { columnName: delivery_postal_code, columnType: string }
+      - { columnName: item_id, columnType: string }
+      - { columnName: product_id, columnType: string }
+      - { columnName: seller, columnType: string }
+      - { columnName: quantity, columnType: integer }
+      - { columnName: delivery_attempts, columnType: integer }
+      - { columnName: delivered, columnType: boolean }
+
+  - id: fragPageSourceAttributedActivity
+    description: "Fragment."
+    schema:
+      - { columnName: date, columnType: date }
+      - { columnName: mkt_channel, columnType: string }
+      - { columnName: mkt_param1, columnType: string }
+      - { columnName: mkt_param2, columnType: string }
+      - { columnName: mkt_param3, columnType: string }
+      - { columnName: mkt_param4, columnType: string }
+      - { columnName: site_cat1, columnType: string }
+      - { columnName: site_cat2, columnType: string }
+      - { columnName: page_type, columnType: string }
+      - { columnName: page_name, columnType: string }
+      - { columnName: product_id, columnType: string }
+      - { columnName: search_term, columnType: string }
+      - { columnName: page_category_1, columnType: string }
+      - { columnName: page_category_2, columnType: string }
+      - { columnName: page_category_3, columnType: string }
+      - { columnName: page_category_4, columnType: string }
+      - { columnName: page_category_5, columnType: string }
+      - { columnName: attributed_units_sold, columnType: double }
+      - { columnName: attributed_revenue, columnType: double }
+      - { columnName: currency_code, columnType: string }
+
+  - id: fragCustomerIdMappingsChannel
+    description: "Core fragment for feedCustomerIdMappingsChannel."
+    schema:
+      - { columnName: date, columnType: date }
+      - { columnName: channel, columnType: string }
+      - { columnName: customer_id, columnType: string }
+      - { columnName: channel_master_customer_id, columnType: string }
+
+  - id: fragMarketingCse
+    description: "Core fragment for feedMarketingCse."
+    schema:
+      - { columnName: date, columnType: date }
+      - { columnName: mkt_param1, columnType: string }
+      - { columnName: mkt_param2, columnType: string }
+      - { columnName: mkt_param3, columnType: string }
+      - { columnName: mkt_param4, columnType: string }
+      - { columnName: site_cat1, columnType: string }
+      - { columnName: site_cat2, columnType: string }
+      - { columnName: product_id, columnType: string }
+      - { columnName: marketing_cost, columnType: double }
+      - { columnName: clicks, columnType: long }
+      - { columnName: impressions, columnType: long }
+      - { columnName: shopping_channel, columnType: string }
+      - { columnName: manufacturer, columnType: string }
+      - { columnName: sku, columnType: string }
+      - { columnName: sales, columnType: double }
+      - { columnName: orders, columnType: double }
+      - { columnName: order_id, columnType: string }
+      - { columnName: currencyCode, columnType: string }
+
+  - id: fragMarketingSeo
+    description: "Core fragment for feedMarketingSeo."
+    schema:
+      - { columnName: date, columnType: date }
+      - { columnName: mkt_param1, columnType: string }
+      - { columnName: mkt_param2, columnType: string }
+      - { columnName: mkt_param3, columnType: string }
+      - { columnName: mkt_param4, columnType: string }
+      - { columnName: site_cat1, columnType: string }
+      - { columnName: site_cat2, columnType: string }
+      - { columnName: product_id, columnType: string }
+      - { columnName: marketing_cost, columnType: double }
+      - { columnName: clicks, columnType: long }
+      - { columnName: search_engine, columnType: string }
+      - { columnName: search_string, columnType: string }
+      - { columnName: impressions, columnType: long }
+      - { columnName: avg_pos_rank, columnType: double }
+      - { columnName: sales, columnType: double }
+      - { columnName: orders, columnType: double }
+      - { columnName: order_id, columnType: string }
+      - { columnName: currencyCode, columnType: string }
+
+  - id: fragPriceComparisons
+    description: "Core fragment for feedPriceComparisons."
+    schema:
+      - { columnName: date, columnType: date }
+      - { columnName: channel, columnType: string }
+      - { columnName: product_id, columnType: string }
+      - { columnName: competitor, columnType: string }
+      - { columnName: price, columnType: float }
+      - { columnName: currency_code, columnType: string }
+      - { columnName: in_stock, columnType: boolean }
+
+  - id: fragEmailBounceDetail
+    description: "Core fragment for feedEmailBounceDetail."
+    schema:
+      - { columnName: date, columnType: date }
+      - { columnName: campaign, columnType: string }
+      - { columnName: email_address, columnType: string }
+      - { columnName: emails_sent, columnType: integer }
+      - { columnName: hard_bounces, columnType: integer }
+      - { columnName: soft_bounces, columnType: integer }
+
+  - id: fragEmailBounceDetailEmailLkup
+    description: "Mapping fragment that will set the 'email_address' field based on a given 'email_address_target'"
+    schema:
+      - { columnName: email_address_source, columnType: string }
+      - { columnName: email_address_target, columnType: string }
+
+  - id: fragCustomerActivity
+    description: "Core fragment for feedCustomerActivity."
+    schema:
+      - { columnName: date, columnType: date }
+      - { columnName: customer_id, columnType: string }
+      - { columnName: email_address, columnType: string }
+      - { columnName: product_id, columnType: string }
+      - { columnName: product_views, columnType: integer }
+      - { columnName: items_abandoned, columnType: integer }
+      - { columnName: site_cat1, columnType: string }
+      - { columnName: site_cat2, columnType: string }
+
+  - id: fragCustomerActivityEmail
+    description: "Fragment."
+    schema:
+      - { columnName: date, columnType: date }
+      - { columnName: customer_id, columnType: string }
+      - { columnName: email_address, columnType: string }
+
+  - id: fragFailedOrderAttempts
+    description: This is the core fragment for feedFailedOrderAttempts.
+    schema:
+      - { columnName: attempt_id, columnType: string }
+      - { columnName: placed_timestamp, columnType: date }
+      - { columnName: channel, columnType: string }
+      - { columnName: site_cat1, columnType: string }
+      - { columnName: site_cat2, columnType: string }
+      - { columnName: customer_id, columnType: string }
+      - { columnName: customer_email, columnType: string }
+      - { columnName: shipping_country, columnType: string }
+      - { columnName: shipping_region, columnType: string }
+      - { columnName: shipping_postal_code, columnType: string }
+      - { columnName: payment_info, columnType: string }
+      - { columnName: currency_code, columnType: string }
+      - { columnName: sales, columnType: double }
+      - { columnName: sales_ex_tax, columnType: double }
+      - { columnName: failure_reason_code, columnType: string }
+      - { columnName: order_type, columnType: string }
+      - { columnName: bought_online, columnType: boolean }
+      - { columnName: purchase_channel, columnType: string }
+
+  - id: fragMarketingAttribution
+    description: This is the core fragment for feedMarketingAttribution.
+    schema:
+      - { columnName: date, columnType: date }
+      - { columnName: mkt_channel, columnType: string }
+      - { columnName: mkt_param1, columnType: string }
+      - { columnName: mkt_param2, columnType: string }
+      - { columnName: mkt_param3, columnType: string }
+      - { columnName: mkt_param4, columnType: string }
+      - { columnName: site_cat1, columnType: string }
+      - { columnName: site_cat2, columnType: string }
+      - { columnName: first_click_sales, columnType: double }
+      - { columnName: last_click_sales, columnType: double }
+      - { columnName: avg_click_sales, columnType: double }
+      - { columnName: currency_code, columnType: string }
 
