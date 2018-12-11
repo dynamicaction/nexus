@@ -400,7 +400,8 @@ fragInputs:
   - id: fragOrderAttributesSegmentValue
     description: "Fragment."
     dependencies:
-      - fragOrderAttributesSegment
+      fragments:
+        - fragOrderAttributesSegment
     schema:
       - { columnName: idx, columnType: integer }
       - { columnName: segment_id, columnType: string }
@@ -416,7 +417,8 @@ fragInputs:
   - id: fragCustomerAttributesSegment
     description: "Fragment."
     dependencies:
-      - fragCustomerAttributesSegmentValue
+      fragments:
+        - fragCustomerAttributesSegmentValue
     schema:
       - { columnName: customer_id, columnType: string }
       - { columnName: idx, columnType: integer }
@@ -425,7 +427,8 @@ fragInputs:
   - id: fragCustomerAttributesSegmentValue
     description: "Fragment."
     dependencies:
-      - fragCustomerAttributesSegment
+      fragments:
+        - fragCustomerAttributesSegment
     schema:
       - { columnName: idx, columnType: integer }
       - { columnName: segment_id, columnType: string }
@@ -442,7 +445,8 @@ fragInputs:
   - id: fragSiteAttributesSegment
     description: "Fragment."
     dependencies:
-      - fragSiteAttributesSegmentValue
+      fragments:
+        - fragSiteAttributesSegmentValue
     schema:
       - { columnName: channel, columnType: string }
       - { columnName: sale_location1, columnType: string }
@@ -452,7 +456,8 @@ fragInputs:
   - id: fragSiteAttributesSegmentValue
     description: "Fragment."
     dependencies:
-      - fragSiteAttributesSegment
+      fragments:
+        - fragSiteAttributesSegment
     schema:
       - { columnName: idx, columnType: integer }
       - { columnName: segment_id, columnType: string }
@@ -468,7 +473,8 @@ fragInputs:
   - id: fragStockLocationAttributesSegmentValue
     description: "Fragment."
     dependencies:
-      - fragStockLocationAttributesSegment
+      fragments:
+        - fragStockLocationAttributesSegment
     schema:
       - { columnName: stock_location, columnType: string }
       - { columnName: idx, columnType: integer }
@@ -477,7 +483,8 @@ fragInputs:
   - id: fragStockLocationAttributesSegmentValue
     description: "Fragment."
     dependencies:
-      - fragStockLocationAttributesSegment
+      fragments:
+        - fragStockLocationAttributesSegment
     schema:
       - { columnName: idx, columnType: integer }
       - { columnName: segment_id, columnType: string }
@@ -1032,7 +1039,8 @@ fragInputs:
   - id: fragShipmentsOrders
     description: "This is for when shipments are split between different source files. It is paired with fragShipmentsProducts to build the shipments feed."
     dependencies:
-      - fragShipmentsProducts
+      fragments:
+        - fragShipmentsProducts
     schema:
       - { columnName: shipment_id, columnType: string }
       - { columnName: order_id, columnType: string }
@@ -1057,7 +1065,8 @@ fragInputs:
   - id: fragShipmentsProducts
     description: "This is for when shipments are split between different source files. It is paired with fragShipmentsOrders to build the shipments feed."
     dependencies:
-      - fragShipmentsOrders
+      fragments:
+        - fragShipmentsOrders
     schema:
       - { columnName: order_id, columnType: string }
       - { columnName: product_id, columnType: string }
