@@ -2,7 +2,7 @@
 fragInputs:
   - id: fragOrderLines
     isCore: true
-    description: This is the core fragment for feedOrderLines.
+    description: "Core fragment for feedOrderLines."
     schema:
       - { columnName: orderLineId, columnType: string }
       - { columnName: order_id, columnType: string }
@@ -45,8 +45,8 @@ fragInputs:
       - { columnName: order_line_attribute5, columnType: string }
 
   - id: fragReturns
-    isCoure: true
-    description: The core fragment for all returns in a given day
+    isCore: true
+    description: "Core fragment for feedReturns."
     schema:
       - { columnName: orderLineId, columnType: string }
       - { columnName: order_id, columnType: string }
@@ -67,7 +67,7 @@ fragInputs:
       - { columnName: returned_to_store, columnType: string }
 
   - id: fragReturnsReasons
-    description: Mapping fragment that will set the return reason filed based on 'order_id' and 'item_id'
+    description: "Mapping fragment that will set feedReturn.return_reason_internal based on 'order_id' and 'item_id'"
     schema:
       - { columnName: orderLineId, columnType: integer }
       - { columnName: order_id, columnType: string }
@@ -75,7 +75,7 @@ fragInputs:
       - { columnName: reason, columnType: string }
 
   - id: fragReturnsReasonsLkup
-    description: Mapping fragment that will reset the 'return_reason_internal' column to 'reasonText' if it's currently 'reason'
+    description: "Mapping fragment that will set feedReturn.return_reason_internal to 'reasonText' if it's currently 'reason'"
     schema:
       - { columnName: reason, columnType: string }
       - { columnName: reasonText, columnType: string }
@@ -217,6 +217,7 @@ fragInputs:
       - { columnName: applyType, columnType: string }
 
   - id: fragBusinessCalendar
+    isCore: true
     description: Mapping fragment for calculating 'shipment_promise_timestamp'.
     schema:
       - { columnName: date, columnType: date }
@@ -341,7 +342,8 @@ fragInputs:
       - { columnName: nameOut, columnType: string }
 
   - id: fragItemAttributes
-    description: Core fragment which passes in all item attribute data by item id, attribute number and value
+    isCore: true
+    description: "Core fragment for feedItemAttributes."
     schema:
       - { columnName: item_id, columnType: string }
       - { columnName: idx, columnType: integer }
@@ -362,7 +364,8 @@ fragInputs:
       - { columnName: value, columnType: string}
 
   - id: fragProductAttributes
-    description: "Core product attribute fragment"
+    isCore: true
+    description: "Core fragment for feedProductAttributes."
     schema:
       - { columnName: product_id, columnType: string }
       - { columnName: idx, columnType: integer }
@@ -384,7 +387,8 @@ fragInputs:
       - { columnName: value, columnType: string }
 
   - id: fragOrderAttributes
-    description: "Core order attributes fragment"
+    isCore: true
+    description: "Core fragment for feedOrderAttributes."
     schema:
       - { columnName: order_id, columnType: string }
       - { columnName: idx, columnType: integer }
@@ -408,7 +412,8 @@ fragInputs:
       - { columnName: value, columnType: string }
 
   - id: fragCustomerAttributes
-    description: "Core customer attribute fragment"
+    isCore: true
+    description: "Core fragment for feedCustomerAttributes."
     schema:
       - { columnName: order_id, columnType: string }
       - { columnName: idx, columnType: integer }
@@ -435,7 +440,8 @@ fragInputs:
       - { columnName: value, columnType: string }
 
   - id: fragSiteAttributes
-    description: "Core site attributes fragment"
+    isCore: true
+    description: "Core fragment for feedSiteAttributes."
     schema:
       - { columnName: channel, columnType: string }
       - { columnName: sale_location1, columnType: string }
@@ -464,7 +470,8 @@ fragInputs:
       - { columnName: value, columnType: string }
 
   - id: fragStockLocationAttributes
-    description: "Core stock location attributes fragment"
+    isCore: true
+    description: "Core fragment for feedStockLocationAttributes."
     schema:
       - { columnName: stock_location, columnType: string }
       - { columnName: idx, columnType: integer }
@@ -491,6 +498,7 @@ fragInputs:
       - { columnName: value, columnType: string }
 
   - id: fragDataAnalyticsImport
+    isCore: true
     description: "Fragment for loading historical metrics or prior period data."
     schema:
       - { columnName: start_date, columnType: date }
@@ -501,7 +509,8 @@ fragInputs:
       - { columnName: dimension_values, columnType: string }
 
   - id: fragCalendar
-    description: "Fragment with calendar information for the client's financial periods."
+    isCore: true
+    description: "Core fragment for feedCalendar."
     schema:
       - { columnName: year, columnType: integer }
       - { columnName: quarter, columnType: integer }
@@ -517,20 +526,22 @@ fragInputs:
 ##      - { columnName: is_non_business_day, columnType: boolean }
 
   - id: fragTrademarkTerms
-    description: "Mapping fragment for search terms."
+    isCore: true
+    description: "Core fragment for feedTrademarkTerms."
     schema:
       - { columnName: search_string, columnType: string }
       - { columnName: longerThan3, columnType: string }
 
   - id: fragCurrencyConversionRates
-    description: "Fragment for currency conversion rates."
+    isCore: true
+    description: "Core fragment for feedCurrencyConversionRates."
     schema:
       - { columnName: date, columnType: date }
       - { columnName: currency_code, columnType: string }
       - { columnName: conversion_rate, columnType: double }
 
    id: fragInventoryFulfilment
-   description: "Fragment that has inventory poduct locations"
+   description: "Core fragment for feedInventoryFulfilment."
    schema:
      - { columnName: date, columnType: date }
      - { columnName: channel, columnType: string }
@@ -577,8 +588,6 @@ fragInputs:
     schema:
       - { columnName: location_id, columnType: string }
 
-
-
   - id: fragProductInventoryPrice
     description: "Fragment that has inventory price info."
     schema:
@@ -594,7 +603,8 @@ fragInputs:
       - { columnName: currency, columnType: string }
 
   - id: fragInventorySaleLocation
-    description: "Fragment that has inventory the sale location and price info."
+    isCore: true
+    description: "Core fragment for feedInventorySaleLocation."
     schema:
       - { columnName: date, columnType: date }
       - { columnName: channel, columnType: string }
@@ -621,7 +631,8 @@ fragInputs:
       - { columnName: waitlist_units, columnType: integer }
 
   - id: fragInventoryStockLocation
-    description: "Fragment that has inventory the stock location and unit cost info."
+    isCore: true
+    description: "Core fragment for feedInventoryStockLocation."
     schema:
       - { columnName: date, columnType: date }
       - { columnName: location_id, columnType: string }
@@ -673,7 +684,8 @@ fragInputs:
       - { columnName: units_in_stock_offline, columnType: integer }
 
   - id: fragMobileDevices
-    description: "Fragment."
+    isCore: true
+    description: "Core fragment for feedMobileDevices."
     schema:
       - { columnName: date, columnType: date }
       - { columnName: device_name, columnType: string }
@@ -685,7 +697,8 @@ fragInputs:
       - { columnName: site_cat2, columnType: string }
 
   - id: fragOrderSources
-    description: "Fragment."
+    isCore: true
+    description: "Core fragment for feedOrderSources."
     schema:
       - { columnName: order_date, columnType: date }
       - { columnName: order_id, columnType: string }
@@ -699,7 +712,7 @@ fragInputs:
 
   - id: fragOrders
     isCore: true
-    description: This is the core fragment for feedOrders.
+    description: "Core fragment for feedOrders."
     schema:
       - { columnName: order_id, columnType: string }
       - { columnName: placed_timestamp, columnType: date }
@@ -784,7 +797,8 @@ fragInputs:
       - { columnName: mkt_param4_text, columnType: string }
 
   - id: fragPageSourceActivity
-    description: "Fragment."
+    isCore: true
+    description: "Core fragment for feedPageSourceActivity."
     schema:
       - { columnName: date, columnType: date }
       - { columnName: mkt_channel, columnType: string }
@@ -822,7 +836,8 @@ fragInputs:
       - { columnName: page_name_lkup, columnType: string }
 
    - id: fragProductSets
-    description: "Fragment."
+    isCore: true
+    description: "Core fragment for feedProductSets."
     schema:
       - { columnName: set_id, columnType: string }
       - { columnName: product_id, columnType: string }
@@ -893,7 +908,8 @@ fragInputs:
       - { columnName: matchType, columnType: string }
 
   - id: fragPageSourceOrders
-    description: "Fragment."
+    isCore: true
+    description: "Core fragment for feedPageSourceOrders."
     schema:
       - { columnName: date, columnType: date }
       - { columnName: site_cat1, columnType: string }
@@ -912,7 +928,8 @@ fragInputs:
       - { columnName: currency_code, columnType: string }
 
   - id: fragProductProperties
-    description: "Fragment."
+    isCore: true
+    description: "Core fragment for feedProductProperties."
     schema:
       - { columnName: product_id, columnType: string }
       - { columnName: product_name, columnType: string }
@@ -962,7 +979,8 @@ fragInputs:
       - { columnName: category_id, columnType: string }
 
   - id: fragProductSourceActivity
-    description: "Fragment."
+    isCore: true
+    description: "Core fragment for feedProductSourceActivity."
     schema:
       - { columnName: date, columnType: date }
       - { columnName: mkt_channel, columnType: string }
@@ -996,7 +1014,7 @@ fragInputs:
 
   - id: fragShipments
     isCore: true
-    description: This is the core fragment for feedShipments.
+    description: "Core fragment for feedShipments."
     schema:
       - { columnName: orderLineId, columnType: string }
       - { columnName: shipment_id, columnType: string }
@@ -1074,7 +1092,7 @@ fragInputs:
       - { columnName: quantity, columnType: integer }
 
   - id: fragPageCountries
-    description: "Fragment."
+    description: "Core fragment for feedPageCountries."
     schema:
       - { columnName: date, columnType: date }
       - { columnName: site_cat1, columnType: string }
@@ -1095,7 +1113,8 @@ fragInputs:
       - { columnName: total_time_on_page, columnType: double }
 
   - id: fragMarketingPpc
-    description: "Fragment."
+    isCore: true
+    description: "Core fragment for feedMarketingPpc."
     schema:
       - { columnName: date, columnType: date }
       - { columnName: mkt_param1, columnType: string }
@@ -1132,7 +1151,8 @@ fragInputs:
       - { columnName: impression_assisted_orders, columnType: double }
 
   - id: fragMarketingPpc90Days
-    description: "Fragment."
+    isCore: true
+    description: "Core fragment for feedMarketingPpc90Days."
     schema:
       - { columnName: date, columnType: date }
       - { columnName: mkt_param1, columnType: string }
@@ -1171,7 +1191,8 @@ fragInputs:
       - { columnName: mkt_param4_text, columnType: string }
 
   - id: fragProductImageUrls
-    description: "Fragment."
+    isCore: true
+    description: "Core fragment for feedProductImageUrls."
     schema:
       - { columnName: product_id, columnType: string }
       - { columnName: image_url, columnType: string }
@@ -1183,6 +1204,7 @@ fragInputs:
       - { columnName: image_url, columnType: string }
 
   - id: fragCancellations
+    isCore: true
     description: "This is the core fragment for feedCancellations."
     schema:
       - { columnName: orderLineId, columnType: string }
@@ -1217,7 +1239,8 @@ fragInputs:
       - { columnName: reason_text, columnType: string }
 
   - id: fragMarketingEmail
-    description: "Fragment."
+    isCore: true
+    description: "Core fragment for feedMarketingEmail."
     schema:
       - { columnName: date, columnType: date }
       - { columnName: mkt_param1, columnType: string }
@@ -1248,7 +1271,8 @@ fragInputs:
       - { columnName: overwrite, columnType: boolean }
 
   - id: fragMarketingAffiliate
-    description: "Fragment."
+    isCore: true
+    description: "Core fragment for feedMarketingAffiliate."
     schema:
       - { columnName: date, columnType: date }
       - { columnName: mkt_param1, columnType: string }
@@ -1267,7 +1291,8 @@ fragInputs:
       - { columnName: currencyCode, columnType: string }
 
   - id: fragMarketingOther
-    description: "Fragment."
+    isCore: true
+    description: "Core fragment for feedMarketingOther."
     schema:
       - { columnName: date, columnType: date }
       - { columnName: mkt_channel, columnType: string }
@@ -1302,6 +1327,7 @@ fragInputs:
       - { columnName: order_id, columnType: string }
 
   - id: fragExternalSales
+    isCore: true
     description: "This is the core fragment for feedExternalSales."
     schema:
       - { columnName: product_id, columnType: string }
@@ -1312,7 +1338,8 @@ fragInputs:
       - { columnName: currency_code, columnType: string }
 
   - id: fragTargetData
-    description: "Fragment for loading target metrics data."
+    isCore: true
+    description: "Core fragment for loading target metrics data(feedTargetData)."
     schema:
       - { columnName: start_date, columnType: date }
       - { columnName: end_date, columnType: date }
@@ -1322,6 +1349,7 @@ fragInputs:
       - { columnName: dimension_values, columnType: string }
 
   - id: fragProductRatings
+    isCore: true
     description: "Core fragment for feedProductRatings."
     schema:
       - { columnName: date, columnType: date }
@@ -1332,6 +1360,7 @@ fragInputs:
       - { columnName: likelihood_to_recommend, columnType: float }
 
   - id: fragPurchaseOrders
+    isCore: true
     description: "Core fragment for feedPurchaseOrders."
     schema:
       - { columnName: date, columnType: date }
@@ -1345,6 +1374,7 @@ fragInputs:
       - { columnName: last_po_units, columnType: integer }
 
   - id: fragCustomerActivity
+    isCore: true
     description: "Core fragment for feedCustomerActivity."
     schema:
       - { columnName: date, columnType: date }
@@ -1357,6 +1387,7 @@ fragInputs:
       - { columnName: site_cat2, columnType: string }
 
   - id: fragDeclines
+    isCore: true
     description: "This is the core fragment for feedDeclines."
     schema:
       - { columnName: order_id, columnType: string }
@@ -1374,6 +1405,7 @@ fragInputs:
       - { columnName: reason, columnType: string }
 
   - id: fragProductImpressions
+    isCore: true
     description: "This is the core fragment for feedProductImpressions."
     schema:
       - { columnName: date, columnType: date }
@@ -1384,6 +1416,7 @@ fragInputs:
       - { columnName: impressions, columnType: long }
 
   - id: fragInventoryStoreLocation
+    isCore: true
     description: "This is the core fragment for feedInventoryStoreLocation."
     schema:
       - { columnName: date, columnType: date }
@@ -1418,8 +1451,8 @@ fragInputs:
       - { columnName: cost_currency, columnType: string }
       - { columnName: is_reorderable, columnType: boolean }
 
-
   - id: fragOrderAdjustments
+    isCore: true
     description: "This is the core fragment for feedOrderAdjustments."
     schema:
       - { columnName: adjustment_date, columnType: date }
@@ -1435,6 +1468,7 @@ fragInputs:
       - { columnName: site_cat1, columnType: string }
 
   - id: fragStoreLocation
+    isCore: true
     description: "Core fragment for feedStoreLocation."
     schema:
       - { columnName: date, columnType: date }
@@ -1443,6 +1477,7 @@ fragInputs:
       - { columnName: footfall, columnType: long }
 
   - id: fragStorePickups
+    isCore: true
     description: "Core fragment for feedStorePickups."
     schema:
       - { columnName: orderLineId, columnType: string }
@@ -1460,6 +1495,7 @@ fragInputs:
       - { columnName: pickup_site_cat2, columnType: string }
 
   - id: fragDeliveries
+    isCore: true
     description: "This is the core fragment for feedDeliveries."
     schema:
       - { columnName: orderLineId, columnType: string }
@@ -1484,7 +1520,8 @@ fragInputs:
       - { columnName: delivered, columnType: boolean }
 
   - id: fragPageSourceAttributedActivity
-    description: "Fragment."
+    isCore: true
+    description: "Core fragment for feedPageSourceAttributedActivity."
     schema:
       - { columnName: date, columnType: date }
       - { columnName: mkt_channel, columnType: string }
@@ -1508,6 +1545,7 @@ fragInputs:
       - { columnName: currency_code, columnType: string }
 
   - id: fragCustomerIdMappingsChannel
+    isCore: true
     description: "Core fragment for feedCustomerIdMappingsChannel."
     schema:
       - { columnName: date, columnType: date }
@@ -1516,6 +1554,7 @@ fragInputs:
       - { columnName: channel_master_customer_id, columnType: string }
 
   - id: fragMarketingCse
+    isCore: true
     description: "Core fragment for feedMarketingCse."
     schema:
       - { columnName: date, columnType: date }
@@ -1538,6 +1577,7 @@ fragInputs:
       - { columnName: currencyCode, columnType: string }
 
   - id: fragMarketingSeo
+    isCore: true
     description: "Core fragment for feedMarketingSeo."
     schema:
       - { columnName: date, columnType: date }
@@ -1560,6 +1600,7 @@ fragInputs:
       - { columnName: currencyCode, columnType: string }
 
   - id: fragPriceComparisons
+    isCore: true
     description: "Core fragment for feedPriceComparisons."
     schema:
       - { columnName: date, columnType: date }
@@ -1571,6 +1612,7 @@ fragInputs:
       - { columnName: in_stock, columnType: boolean }
 
   - id: fragEmailBounceDetail
+    isCore: true
     description: "Core fragment for feedEmailBounceDetail."
     schema:
       - { columnName: date, columnType: date }
@@ -1587,6 +1629,7 @@ fragInputs:
       - { columnName: email_address_target, columnType: string }
 
   - id: fragCustomerActivity
+    isCore: true
     description: "Core fragment for feedCustomerActivity."
     schema:
       - { columnName: date, columnType: date }
@@ -1606,6 +1649,7 @@ fragInputs:
       - { columnName: email_address, columnType: string }
 
   - id: fragFailedOrderAttempts
+    isCore: true
     description: This is the core fragment for feedFailedOrderAttempts.
     schema:
       - { columnName: attempt_id, columnType: string }
@@ -1628,6 +1672,7 @@ fragInputs:
       - { columnName: purchase_channel, columnType: string }
 
   - id: fragMarketingAttribution
+    isCore: true
     description: This is the core fragment for feedMarketingAttribution.
     schema:
       - { columnName: date, columnType: date }
