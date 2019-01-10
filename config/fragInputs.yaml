@@ -81,92 +81,92 @@ fragInputs:
       - { columnName: reasonText, columnType: string }
 
   - id: fragOrderLineItemLkup
-    description: This fragment is utilized in the event that you need to set the item_id in the feed based on an order_id/orderLineId combination.
+    description: "This fragment is utilized in the event that you need to set the item_id in the feed based on an order_id/orderLineId combination."
     schema:
       - { columnName: orderLineId, columnType: integer }
       - { columnName: order_id, columnType: string }
       - { columnName: item_id, columnType: string }
 
   - id: fragItemProductLkup
-    description: Mapping fragment that will set the 'product_id' field based on a given 'item_id'
+    description: "Mapping fragment that will set the 'product_id' field based on a given 'item_id'"
     schema:
       - { columnName: item_id, columnType: string }
       - { columnName: product_id, columnType: string }
 
   - id: fragInventoryItemProductLkup
-    description: Mapping fragment that will set the 'product_id' field based on a given 'item_id'
+    description: "Mapping fragment that will set the 'product_id' field based on a given 'item_id'"
     schema:
       - { columnName: item_id, columnType: string }
       - { columnName: product_id, columnType: string }
 
   - id: fragMarketingProductIdLkup
-    description: Mapping fragment that will set the 'product_id' field based on a given 'target_product_id'
+    description: "Mapping fragment that will set the 'product_id' field based on a given 'target_product_id'"
     schema:
       - { columnName: source_product_id, columnType: string }
       - { columnName: target_product_id, columnType: string }
 
   - id: fragProductSourceActivityItemProductLkup
-    description: Mapping fragment that will set the 'product_id' field based on a given 'item_id'
+    description: "Mapping fragment that will set the 'product_id' field based on a given 'item_id'"
     schema:
       - { columnName: item_id, columnType: string }
       - { columnName: product_id, columnType: string }
 
   - id: fragInventoryProductItemTrans
-    description: Mapping fragment that will set the 'item_id' field based on a given 'product_id'
+    description: "Mapping fragment that will set the 'item_id' field based on a given 'product_id'"
     schema:
       - { columnName: source_product_id, columnType: string }
       - { columnName: target_item_id, columnType: string }
 
   - id: fragProductInventoryStockSkuLkup
-    description: Mapping fragment that will set the 'item_id' field based on a given 'sku_value'
+    description: "Mapping fragment that will set the 'item_id' field based on a given 'sku_value'"
     schema:
       - { columnName: sku_value, columnType: string }
       - { columnName: item_id, columnType: string }
 
   - id: fragInventoryStoreList
-    description: Mapping fragment that will set the 'location_id' field based on a given 'site_id'
+    description: "Mapping fragment that will set the 'location_id' field based on a given 'site_id'"
     schema:
       - { columnName: site_id, columnType: string }
       - { columnName: location_id, columnType: string }
 
   - id: fragInventoryItemTrans
-    description: Mapping fragment that will translate the item_id
+    description: "Mapping fragment that will translate the item_id"
     schema:
       - { columnName: source_item_id, columnType: string }
       - { columnName: target_item_id, columnType: string }
 
   - id: fragWebOrderRef
-    description: Mapping fragment that will translate the order_id
+    description: "Mapping fragment that will translate the order_id"
     schema:
       - { columnName: orderHeaderKey, columnType: string }
       - { columnName: webOrderConfNumber, columnType: string }
 
   - id: fragWebProductIdLkup
-    description: Mapping fragment that will set the 'product_id' field based on a given 'source_product_id'
+    description: "Mapping fragment that will set the 'product_id' field based on a given 'source_product_id'"
     schema:
       - { columnName: source_product_id, columnType: string }
       - { columnName: target_product_id, columnType: string }
 
   - id: fragWebCustomerIdLkup
-    description: Mapping fragment that will set the 'customer_id' field based on a given 'source_customer_id'
+    description: "Mapping fragment that will set the 'customer_id' field based on a given 'source_customer_id'"
     schema:
       - { columnName: source_customer_id, columnType: string }
       - { columnName: target_customer_id, columnType: string }
 
   - id: fragWebCustomerIdLkup
-    description: Mapping fragment that will set the 'email_address_id' field based on a given 'customer_id'
+    description: "Mapping fragment that will set the 'email_address_id' field based on a given 'customer_id'"
     schema:
       - { columnName: customer_id, columnType: string }
       - { columnName: email_address, columnType: string }
 
   - id: fragOrderLinesPlacedTimestamp
-    description: Mapping fragment that will set the 'placed_timestamp' based on 'order_id'
+    description: "Mapping fragment that will set the 'placed_timestamp' based on 'order_id'"
     schema:
       - { columnName: order_id, columnType: string }
       - { columnName: placed_timestamp, columnType: date }
 
   - id: fragOrderLinesShipments
-    description: Mapping fragment that will set [shipping_amount, shipping_ex_tax, shipping_cost, shipping_country, shipping_region, shipping_postal_code, shipping_method, delivery_location_type, shipment_promise_timestamp, delivery_promise_timestamp, pick_up_in_store_promise_timestamp, is_free_shipping, is_express_shipping, pick_pack_cost] if any of those fields are needed from outside files.
+    description: "Mapping fragment that will set [shipping_amount, shipping_ex_tax, shipping_cost, shipping_country, shipping_region, shipping_postal_code, shipping_method, delivery_location_type, shipment_promise_timestamp, delivery_promise_timestamp, pick_up_in_store_promise_timestamp, is_free_shipping, is_express_shipping, pick_pack_cost] if any of those fields are needed from outside files."
     schema:
       - { columnName: orderLineId, columnType: string }
       - { columnName: order_id, columnType: string }
@@ -191,13 +191,13 @@ fragInputs:
       - { columnName: order_id_type, columnType: string }
 
   - id: fragTransOrderIdWa
-    description: Mapping fragment for replacing fragOrderLinesShipments 'order_id'.
+    description: "Mapping fragment for replacing fragOrderLinesShipments 'order_id'."
     schema:
       - { columnName: waOrderId, columnType: string }
       - { columnName: order_id, columnType: string }
 
   - id: fragTransOrderLineIdWa
-    description: Mapping fragment for replacing fragOrderLinesShipments 'order_id' and/or 'orderLineId'.
+    description: "Mapping fragment for replacing fragOrderLinesShipments 'order_id' and/or 'orderLineId'."
     schema:
       - { columnName: waOrderId, columnType: string }
       - { columnName: waOrderLineId, columnType: string }
@@ -205,7 +205,7 @@ fragInputs:
       - { columnName: orderLineId, columnType: string }
 
   - id: fragShippingCost
-    description: Mapping fragment that will calculate 'shipping_cost' and 'shipment_promise_timestamp'.
+    description: "Mapping fragment that will calculate 'shipping_cost' and 'shipment_promise_timestamp'."
     schema:
       - { columnName: shippingPartner, columnType: string }
       - { columnName: shippingMethod, columnType: string }
@@ -218,13 +218,13 @@ fragInputs:
 
   - id: fragBusinessCalendar
     isCore: true
-    description: Mapping fragment for calculating 'shipment_promise_timestamp'.
+    description: "Mapping fragment for calculating 'shipment_promise_timestamp'."
     schema:
       - { columnName: date, columnType: date }
       - { columnName: workingDay, columnType: boolean }
 
   - id: fragOrderLinesPromos
-    description: Mapping fragment for calculating [sales, sales_ex_tax, promo_info].
+    description: "Mapping fragment for calculating [sales, sales_ex_tax, promo_info]."
     schema:
       - { columnName: orderLineId, columnType: string }
       - { columnName: order_id, columnType: string }
@@ -236,7 +236,7 @@ fragInputs:
       - { columnName: subtractFromSales, columnType: boolean }
 
   - id: fragOrderLinesItemPromos
-    description: Mapping fragment for calculating [sales, sales_ex_tax, promo_info] by spreading the costs across the orderlines.
+    description: "Mapping fragment for calculating [sales, sales_ex_tax, promo_info] by spreading the costs across the orderlines."
     schema:
       - { columnName: order_id, columnType: string }
       - { columnName: item_id, columnType: string }
@@ -247,7 +247,7 @@ fragInputs:
       - { columnName: subtractFromOrder, columnType: boolean }
 
   - id: fragOrderLinesInventoryFlags
-    description: Mapping fragment that will set [is_backover, is_preorder, is_ship_from_vendor] by left outer joining on item_id
+    description: "Mapping fragment that will set [is_backover, is_preorder, is_ship_from_vendor] by left outer joining on item_id"
     schema:
       - { columnName: item_id, columnType: string }
       - { columnName: is_backover, columnType: boolean }
@@ -255,7 +255,7 @@ fragInputs:
       - { columnName: is_ship_from_vendor, columnType: boolean }
 
   - id: fragProductSample
-    description: Mapping fragment used to calculate 'other_promo_cost' of sample products.
+    description: "Mapping fragment used to calculate 'other_promo_cost' of sample products."
     schema:
       - { columnName: product_id, columnType: string }
       - { columnName: item_id, columnType: string }
@@ -263,7 +263,7 @@ fragInputs:
       - { columnName: promoName, columnType: string }
 
   - id: fragOrderLinesSamples
-    description: Mapping fragment used to calculate [promo_info, other_promo_cost, is_free_sample] of sample products.
+    description: "Mapping fragment used to calculate [promo_info, other_promo_cost, is_free_sample] of sample products."
     schema:
       - { columnName: orderLineId, columnType: string }
       - { columnName: order_id, columnType: string }
@@ -275,7 +275,7 @@ fragInputs:
       - { columnName: isSample, columnType: boolean }
 
   - id: fragProductInventoryCost
-    description: Mapping fragment used to calculate 'other_promo_cost' of sample products.
+    description: "Mapping fragment used to calculate 'other_promo_cost' of sample products."
     schema:
       - { columnName: date, columnType: date }
       - { columnName: product_id, columnType: string }
@@ -285,27 +285,27 @@ fragInputs:
       - { columnName: currency_code, columnType: string }
 
   - id: fragOrderLinesOtherPromoCost
-    description: Mapping fragment used to calculate 'other_promo_cost'
+    description: "Mapping fragment used to calculate 'other_promo_cost'"
     schema:
       - { columnName: orderLineId, columnType: string }
       - { columnName: order_id, columnType: string }
       - { columnName: other_promo_cost, columnType: double }
 
   - id: fragAttributeValueLkup
-    description: Mapping fragment used to translate [order_line_attribute1, order_line_attribute2, order_line_attribute3, order_line_attribute4, order_line_attribute5] values.
+    description: "Mapping fragment used to translate [order_line_attribute1, order_line_attribute2, order_line_attribute3, order_line_attribute4, order_line_attribute5] values."
     schema:
       - { columnName: attributeNumber, columnType: integer }
       - { columnName: lookup, columnType: string }
       - { columnName: value, columnType: string }
 
   - id: fragShippingCountryLkup
-    description: Mapping fragment used to translate 'shipping_country'
+    description: "Mapping fragment used to translate 'shipping_country'"
     schema:
       - { columnName: shipping_country, columnType: string }
       - { columnName: shippingCountryLkup, columnType: string }
 
   - id: fragShippingOffsetLkup
-    description: Use when you need to calculate [shipment_promise_timestamp, delivery_promise_timestamp, pick_up_in_store_promise_timestamp], and you have shippingCountry and shippingMethod.
+    description: "Use when you need to calculate [shipment_promise_timestamp, delivery_promise_timestamp, pick_up_in_store_promise_timestamp], and you have shippingCountry and shippingMethod."
     schema:
       - { columnName: shipping_country, columnType: string }
       - { columnName: shipping_method, columnType: string }
@@ -314,25 +314,25 @@ fragInputs:
       - { columnName: pickupInStoreOffset, columnType: integer }
 
   - id: fragOmsProductId
-    description: Mapping fragment used to translate 'product_id'
+    description: "Mapping fragment used to translate 'product_id'"
     schema:
       - { columnName: omsProductID, columnType: string }
       - { columnName: product_id, columnType: string }
 
   - id: fragOmsItemId
-    description: Mapping fragment used to translate 'item_id'
+    description: "Mapping fragment used to translate 'item_id'"
     schema:
       - { columnName: omsItemId, columnType: string }
       - { columnName: item_id, columnType: string }
 
   - id: fragOrdersRef
-    description: Mapping fragment used to translate 'order_id'
+    description: "Mapping fragment used to translate 'order_id'"
     schema:
       - { columnName: order_id, columnType: string }
       - { columnName: webOrderId, columnType: string }
 
   - id: fragOrderLinesPromoTranslation
-    description: Mapping fragment used to standardize or translate promo class, type, and name in fragOrderLines.promo_info to different values.  These are all standardized by splitting the promoInfo field {{class}}promo_type::promo_name=amount and matching to reference values in the fragment.
+    description: "Mapping fragment used to standardize or translate promo class, type, and name in fragOrderLines.promo_info to different values.  These are all standardized by splitting the promoInfo field {{class}}promo_type::promo_name=amount and matching to reference values in the fragment."
     schema:
       - { columnName: classIn, columnType: string }
       - { columnName: typeIn, columnType: string }
@@ -350,14 +350,14 @@ fragInputs:
       - { columnName: value, columnType: string }
 
   - id: fragItemAttributesSegment
-    description: Translation fragment that maps an item_id to a given 'segment' of a specific attribute number. This fragment only works in conjunction with fragItemAttributesSegment
+    description: "Translation fragment that maps an item_id to a given 'segment' of a specific attribute number. This fragment only works in conjunction with fragItemAttributesSegment"
     schema:
       - { columnName: item_id, columnType: string }
       - { columnName: idx, columnType: integer }
       - { columnName: segmentId, columnType: string }
 
   - id: fragItemAttributesSegmentValue
-    description: Translation fragment that maps a given 'segment' to an attribute value. This fragment only works in conjunction with fragItemAttributesSegmentValue
+    description: "Translation fragment that maps a given 'segment' to an attribute value. This fragment only works in conjunction with fragItemAttributesSegmentValue"
     schema:
       - { columnName: idx, columnType: integer }
       - { columnName: segmentId, columnType: string }
@@ -795,6 +795,7 @@ fragInputs:
       - { columnName: mkt_param2_text, columnType: string }
       - { columnName: mkt_param3_text, columnType: string }
       - { columnName: mkt_param4_text, columnType: string }
+      - { columnName: cycle, columnType: string }
 
   - id: fragPageSourceActivity
     isCore: true
@@ -1189,6 +1190,7 @@ fragInputs:
       - { columnName: mkt_param2_text, columnType: string }
       - { columnName: mkt_param3_text, columnType: string }
       - { columnName: mkt_param4_text, columnType: string }
+      - { columnName: cycle, columnType: string }
 
   - id: fragProductImageUrls
     isCore: true
@@ -1650,7 +1652,7 @@ fragInputs:
 
   - id: fragFailedOrderAttempts
     isCore: true
-    description: This is the core fragment for feedFailedOrderAttempts.
+    description: "This is the core fragment for feedFailedOrderAttempts."
     schema:
       - { columnName: attempt_id, columnType: string }
       - { columnName: placed_timestamp, columnType: date }
@@ -1673,7 +1675,7 @@ fragInputs:
 
   - id: fragMarketingAttribution
     isCore: true
-    description: This is the core fragment for feedMarketingAttribution.
+    description: "This is the core fragment for feedMarketingAttribution."
     schema:
       - { columnName: date, columnType: date }
       - { columnName: mkt_channel, columnType: string }
