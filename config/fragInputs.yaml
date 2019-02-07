@@ -476,7 +476,7 @@ fragInputs:
       - { columnName: segment_id, columnType: string }
       - { columnName: value, columnType: string }
 
-  - id: fragDataAnalyticsImport
+  - id: fragAnalyticsDataImport_core
     isCore: true
     description: "Fragment for loading historical metrics or prior period data."
     schema:
